@@ -93,6 +93,10 @@ def update_tweet_df(json_response, tweets_df, word):
         tweets_df['author_id'].append(tweet['author_id'])
     return tweets_df
 
+def get_tweet_count(json_response):
+    data = json_response['data']
+    return len(data)
+
 def get_tweets_df(df_path):
     tweet_columns = ['word',
                      'id',
@@ -125,6 +129,7 @@ def gap4word(word, default_gap=24):
 
 def get_word_tweets_df(word='yeet',
                        save_path="slang_word_tweets",
+                       year=2010,
                        num_dates=50,
                        MIN_TWEETS_PER_WORD=200):
     df_path = osp.join(save_path, "tweets_df_" + str(word) + ".csv")
@@ -132,7 +137,7 @@ def get_word_tweets_df(word='yeet',
     if len(tweets_df["word"]) >= MIN_TWEETS_PER_WORD:
         print("there are enough tweets for", word)
         return False
-    FIRST_DATE = datetime.datetime(2010,1,1)
+    FIRST_DATE = datetime.datetime(year,1,1)
     bearer_token = auth()
     headers = create_headers(bearer_token)
     date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=gap4word(word))
@@ -152,6 +157,31 @@ def get_word_tweets_df(word='yeet',
     tweets_df = tweets_df.drop_duplicates('text')
     tweets_df.to_csv(df_path)
     return True
+
+
+def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
+    FIRST_DATE = datetime.datetime(year, 1, 1)
+    bearer_token = auth()
+    headers = create_headers(bearer_token)
+    date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=hour_gap)
+    total_num_tweets_with_word = 0
+    T = 0
+    for dt_spn in date_spans:
+        print("getting tweets for ", dt_spn)
+        try:
+            start_date = datetime2apidate(dt_spn[0])
+            end_date = datetime2apidate(dt_spn[1])
+            url = create_url(word=word, start_time=start_date, end_time=end_date)
+            json_response = connect_to_endpoint(url, headers)
+            num_tweets_with_word = get_tweet_count(json_response)
+            T += 1
+            total_num_tweets_with_word += num_tweets_with_word
+            time.sleep(15)
+        except:
+            continue
+    avg_num_tweets_with_word = total_num_tweets_with_word/T
+    return avg_num_tweets_with_word
+
 
 if __name__ == "__main__":
     slang_word_path = "slang_words_100.csv"
