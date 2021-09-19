@@ -2,7 +2,6 @@ venv/
 models/
 losses/
 results/
-word-lists/
 .ipynb_checkpoints/
 .idea/
 **/.DS_Store
