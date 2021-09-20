@@ -170,7 +170,7 @@ if __name__ == "__main__":
 
 
     selected_words_df = pd.read_csv(words_path)
-    words_list = list(selected_words_df[selected_words_df.type == args.type][["word"]])
+    words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 
     #rejected_words = ["coordinated"]
     #for word in rejected_words:
