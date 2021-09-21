@@ -10,7 +10,8 @@ import numpy as np
 import time
 from os import path as osp
 
-BEARER_TOKEN = "token" # INSERT TOKEN
+#BEARER_TOKEN = "token" # INSERT TOKEN
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAbwcL1CoPIKnr3yzUj5kY8Ows1fE%3DsxlS3OukwxoqfM9o7hmtLIfnR1mxWXgoIydlKSQo6lqqU1hIsl" #os.environ.get("BEARER_TOKEN")
 
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
@@ -179,6 +180,8 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
             time.sleep(15)
         except:
             continue
+    if T == 0 :
+        return total_num_tweets_with_word
     avg_num_tweets_with_word = total_num_tweets_with_word/T
     return avg_num_tweets_with_word
 
@@ -193,18 +196,21 @@ if __name__ == "__main__":
     #rejected_words = ["coordinated"]
     #for word in rejected_words:
     #    words_list.remove(word)
+    freqs = {}
+    for word in words_list:
+        freq = approx_word_freq(word)
+        freqs[word] = freq
+        print("frequency of ", word, "is", freq)
 
-    for k in range(0,5):
-        print("----- ", k, "-----")
-        for word in words_list:
-            print("getting tweets for", word)
-            got_tweets = get_word_tweets_df(word, save_path="nonslang_word_tweets_old")
-            print("saved tweets for", word)
-            ## Update slang word dataframe so that we don't sample tweets from this word again
-            idx = np.where(selected_words_df.selected_words == word)
-            selected_words_df.loc[idx[0][0], 'is_saved'] = True
-            selected_words_df.to_csv(slang_word_path)
-            ## Wait 15 minutes to avoid request rate restrictions
-            if got_tweets:
-                print("will wait 15 minutes now")
-                time.sleep(60*15)
+    for word in words_list:
+        print("getting tweets for", word)
+        got_tweets = get_word_tweets_df(word, save_path="nonslang_word_tweets_old")
+        print("saved tweets for", word)
+        ## Update slang word dataframe so that we don't sample tweets from this word again
+        idx = np.where(selected_words_df.selected_words == word)
+        selected_words_df.loc[idx[0][0], 'is_saved'] = True
+        selected_words_df.to_csv(slang_word_path)
+        ## Wait 15 minutes to avoid request rate restrictions
+        if got_tweets:
+            print("will wait 15 minutes now")
+            time.sleep(60*15)
