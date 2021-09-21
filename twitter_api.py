@@ -131,7 +131,6 @@ def gap4word(word, default_gap=24):
 
 def get_word_tweets_df(word='yeet',
                        year=2010,
-                       time_period='old',
                        save_path="data/tweets_old",
                        num_dates=50,
                        MIN_TWEETS_PER_WORD=200):
@@ -141,10 +140,6 @@ def get_word_tweets_df(word='yeet',
         print("there are enough tweets for", word)
         return False
     FIRST_DATE = datetime.datetime(year,1,1)
-    if time_period == "old":
-        FIRST_DATE = datetime.datetime(2010,1,1)
-    else:
-        FIRST_DATE = datetime.datetime(2020, 1, 1)
     bearer_token = auth()
     headers = create_headers(bearer_token)
     date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=gap4word(word))
