@@ -2,7 +2,6 @@ venv/
 models/
 losses/
 results/
-word-lists/
 .ipynb_checkpoints/
 .idea/
 **/.DS_Store
@@ -12,7 +11,7 @@ __pycache__/
 BERT_MLM_fine-tuning.ipynb
 SemEval_2020_subtask_2.ipynb
 
-### All data files
-*.csv
+### Data files
+word-lists/old
 data/
 *.pickle

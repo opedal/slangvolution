@@ -8,10 +8,11 @@ import numpy as np
 # To set your environment variables in your terminal run the following line:
 # export 'BEARER_TOKEN'='<your_bearer_token>'
 import time
+import argparse
 from os import path as osp
 
-#BEARER_TOKEN = "token" # INSERT TOKEN
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAbwcL1CoPIKnr3yzUj5kY8Ows1fE%3DsxlS3OukwxoqfM9o7hmtLIfnR1mxWXgoIydlKSQo6lqqU1hIsl" #os.environ.get("BEARER_TOKEN")
+#andreas' token:
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
 
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
@@ -129,8 +130,9 @@ def gap4word(word, default_gap=24):
         return default_gap
 
 def get_word_tweets_df(word='yeet',
-                       save_path="slang_word_tweets",
                        year=2010,
+                       time_period='old',
+                       save_path="data/tweets_old",
                        num_dates=50,
                        MIN_TWEETS_PER_WORD=200):
     df_path = osp.join(save_path, "tweets_df_" + str(word) + ".csv")
@@ -139,6 +141,10 @@ def get_word_tweets_df(word='yeet',
         print("there are enough tweets for", word)
         return False
     FIRST_DATE = datetime.datetime(year,1,1)
+    if time_period == "old":
+        FIRST_DATE = datetime.datetime(2010,1,1)
+    else:
+        FIRST_DATE = datetime.datetime(2020, 1, 1)
     bearer_token = auth()
     headers = create_headers(bearer_token)
     date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=gap4word(word))
@@ -187,11 +193,17 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
 
 
 if __name__ == "__main__":
-    slang_word_path = "slang_words_100.csv"
-    nonslang_words_path = "nonslang_words_100.csv"
+    words_path = "word-lists/all_words_300.csv"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
+    parser.add_argument("--period", type=str, default="old")
+    parser.add_argument("--save-dir", type=str, default="data/tweets_old")
+    parser.add_argument("--iter", type=int, default=5)
+    args = parser.parse_args()
 
-    selected_words_df = pd.read_csv(nonslang_words_path)
-    words_list = list(selected_words_df.selected_words)
+
+    selected_words_df = pd.read_csv(words_path)
+    words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 
     #rejected_words = ["coordinated"]
     #for word in rejected_words:
@@ -202,15 +214,17 @@ if __name__ == "__main__":
         freqs[word] = freq
         print("frequency of ", word, "is", freq)
 
-    for word in words_list:
-        print("getting tweets for", word)
-        got_tweets = get_word_tweets_df(word, save_path="nonslang_word_tweets_old")
-        print("saved tweets for", word)
-        ## Update slang word dataframe so that we don't sample tweets from this word again
-        idx = np.where(selected_words_df.selected_words == word)
-        selected_words_df.loc[idx[0][0], 'is_saved'] = True
-        selected_words_df.to_csv(slang_word_path)
-        ## Wait 15 minutes to avoid request rate restrictions
-        if got_tweets:
-            print("will wait 15 minutes now")
-            time.sleep(60*15)
+    for k in range(0,args.iter):
+        print("----- ", k, "-----")
+        for word in words_list:
+            print("getting tweets for", word)
+            got_tweets = get_word_tweets_df(word, time_period=args.period, save_path=args.save_dir)
+            print("saved tweets for", word)
+            ## Update slang word dataframe so that we don't sample tweets from this word again
+            idx = np.where(selected_words_df.word == word)
+            selected_words_df.loc[idx[0][0], 'is_saved'] = True
+            selected_words_df.to_csv(words_path)
+            ## Wait 15 minutes to avoid request rate restrictions
+            if got_tweets:
+                print("will wait 15 minutes now")
+                time.sleep(60*15)
