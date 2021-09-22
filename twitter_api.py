@@ -150,7 +150,7 @@ def get_word_tweets_df(word='yeet',
             end_date = datetime2apidate(dt_spn[1])
             url = create_url(word=word, start_time=start_date, end_time=end_date)
             json_response = connect_to_endpoint(url, headers)
-            tweets_df = update_tweet_df(json_response=json_response,tweets_df=tweets_df,word=word)
+            tweets_df = update_tweet_df(json_response=json_response, tweets_df=tweets_df, word=word)
             time.sleep(15)
             #print(json.dumps(json_response, indent=4, sort_keys=True))
         except:
@@ -192,10 +192,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
     parser.add_argument("--period", type=str, default="old")
+    parser.add_argument("--year", type=int, default=2010)
     parser.add_argument("--save-dir", type=str, default="data/tweets_old")
     parser.add_argument("--iter", type=int, default=5)
     args = parser.parse_args()
-
 
     selected_words_df = pd.read_csv(words_path)
     words_list = list(selected_words_df[selected_words_df.type == args.type].word)
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         print("----- ", k, "-----")
         for word in words_list:
             print("getting tweets for", word)
-            got_tweets = get_word_tweets_df(word, time_period=args.period, save_path=args.save_dir)
+            got_tweets = get_word_tweets_df(word, year=args.year, save_path=args.save_dir)
             print("saved tweets for", word)
             ## Update slang word dataframe so that we don't sample tweets from this word again
             idx = np.where(selected_words_df.word == word)
