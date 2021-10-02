@@ -10,6 +10,7 @@ import numpy as np
 import time
 import argparse
 from os import path as osp
+import sys
 
 #andreas' token:
 BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
@@ -186,6 +187,17 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
     avg_num_tweets_with_word = total_num_tweets_with_word/T
     return avg_num_tweets_with_word
 
+def save_word_freqs(words_list):
+    original_stdout = sys.stdout
+    freqs = {}
+    for word in words_list:
+        with open('freqs.txt', 'w') as freqs_file:
+            sys.stdout = freqs_file  # Change the standard output to the file we created.
+            freq = approx_word_freq(word)
+            freqs[word] = freq
+            print("frequency of ", word, "is", freq)
+    sys.stdout = original_stdout
+
 if __name__ == "__main__":
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
@@ -205,11 +217,7 @@ if __name__ == "__main__":
 
     save_dir = os.path.join("data",PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
-    # freqs = {}
-    # for word in words_list:
-    #     freq = approx_word_freq(word)
-    #     freqs[word] = freq
-    #     print("frequency of ", word, "is", freq)
+
 
     for k in range(0,args.iter):
         print("----- ", k, "-----")
