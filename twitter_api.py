@@ -157,9 +157,9 @@ def get_word_tweets_df(word='yeet',
             continue
     tweets_df = pd.DataFrame(tweets_df)
     tweets_df = tweets_df.drop_duplicates('text')
+    print("saving tweets for", word, "at", df_path)
     tweets_df.to_csv(df_path)
     return True
-
 
 def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
     FIRST_DATE = datetime.datetime(year, 1, 1)
@@ -186,34 +186,36 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
     avg_num_tweets_with_word = total_num_tweets_with_word/T
     return avg_num_tweets_with_word
 
-
 if __name__ == "__main__":
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
-    parser.add_argument("--period", type=str, default="old")
     parser.add_argument("--year", type=int, default=2010)
-    parser.add_argument("--save-dir", type=str, default="data/tweets_old")
+    parser.add_argument("--save-dir", type=str, default="data/")
     parser.add_argument("--iter", type=int, default=5)
     args = parser.parse_args()
 
     selected_words_df = pd.read_csv(words_path)
     words_list = list(selected_words_df[selected_words_df.type == args.type].word)
+    PATHS = {2010: "tweets_old",
+             2020:"tweets_new",
+             "slang":"slang_word_tweets",
+             "nonslang":"nonslang_word_tweets"
+             }
 
-    #rejected_words = ["coordinated"]
-    #for word in rejected_words:
-    #    words_list.remove(word)
-    freqs = {}
-    for word in words_list:
-        freq = approx_word_freq(word)
-        freqs[word] = freq
-        print("frequency of ", word, "is", freq)
+    save_dir = os.path.join("data",PATHS[args.year], PATHS[args.type])
+    print("saving tweets under", save_dir)
+    # freqs = {}
+    # for word in words_list:
+    #     freq = approx_word_freq(word)
+    #     freqs[word] = freq
+    #     print("frequency of ", word, "is", freq)
 
     for k in range(0,args.iter):
         print("----- ", k, "-----")
         for word in words_list:
             print("getting tweets for", word)
-            got_tweets = get_word_tweets_df(word, year=args.year, save_path=args.save_dir)
+            got_tweets = get_word_tweets_df(word, year=args.year, save_path=save_dir)
             print("saved tweets for", word)
             ## Update slang word dataframe so that we don't sample tweets from this word again
             idx = np.where(selected_words_df.word == word)
