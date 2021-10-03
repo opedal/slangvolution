@@ -13,7 +13,10 @@ from os import path as osp
 import sys
 
 #andreas' token:
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
+#BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
+
+#Daphna's bearer token
+BEARER_TOKEN =  "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAvM92PZSwVJ%2Ba%2BOD5Pgi4N298uTI%3DBBY7UCntIx9eXHBqGRjgjQcjoDFlMgFGJCjzd65uKISX8VFpwc"
 
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
@@ -124,7 +127,7 @@ def get_tweets_df(df_path):
     return tweets_df
 
 def gap4word(word, default_gap=24):
-    gaps_per_word = {'whadja':240}
+    gaps_per_word = {'whadja':240, "YooKay":240}
     if word in gaps_per_word:
         return gaps_per_word[word]
     else:
@@ -133,7 +136,7 @@ def gap4word(word, default_gap=24):
 def get_word_tweets_df(word='yeet',
                        year=2010,
                        save_path="data/tweets_old",
-                       num_dates=50,
+                       num_dates=25,
                        MIN_TWEETS_PER_WORD=200):
     df_path = osp.join(save_path, "tweets_df_" + str(word) + ".csv")
     tweets_df = get_tweets_df(df_path=df_path)
@@ -145,7 +148,7 @@ def get_word_tweets_df(word='yeet',
     headers = create_headers(bearer_token)
     date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=gap4word(word))
     for dt_spn in date_spans:
-        print("getting tweets for ", dt_spn)
+        print("getting tweets for ", dt_spn[0])
         try:
             start_date = datetime2apidate(dt_spn[0])
             end_date = datetime2apidate(dt_spn[1])
@@ -232,4 +235,4 @@ if __name__ == "__main__":
             ## Wait 15 minutes to avoid request rate restrictions
             if got_tweets:
                 print("will wait 15 minutes now")
-                time.sleep(60*15)
+                time.sleep(15*60)
