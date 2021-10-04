@@ -208,7 +208,7 @@ def save_word_freqs(words_list):
     sys.stdout = original_stdout
 
 if __name__ == "__main__":
-    NUM_DATES=20
+    NUM_DATES=25
 
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
@@ -244,7 +244,7 @@ if __name__ == "__main__":
             selected_words_df.loc[idx[0][0], 'is_saved'] = True
             selected_words_df.to_csv(words_path)
             ## Wait 15 minutes to avoid request rate restrictions
-            if i == 3:
+            if i == 2:
                 i = 0
                 print("will wait 15 minutes now")
                 time.sleep(15*60)
