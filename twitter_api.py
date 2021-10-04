@@ -133,7 +133,10 @@ def gap4word(word, default_gap=48):
                      "hasbian":240,
                      "tardnation":240,
                      "colitas":72,
-                     "Brotox":60}
+                     "brotox":120,
+                     "Brotox":120,
+                     "punanni":120,
+                     }
     if word in gaps_per_word:
         return gaps_per_word[word]
     else:
@@ -228,14 +231,14 @@ if __name__ == "__main__":
              "nonslang":"nonslang_word_tweets"
              }
 
-    save_dir = os.path.join("data",PATHS[args.year], PATHS[args.type])
+    save_dir = os.path.join(args.save_dir,PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
 
     for k in range(0,args.iter):
         i = 0
         print("----- ", k, "-----")
         for word in words_list:
-            if word == "YooKay":
+            if word == "YooKay" or word == "tardnation":
                 continue
             print("getting tweets for", word)
             got_tweets = get_word_tweets_df(word, year=args.year,
