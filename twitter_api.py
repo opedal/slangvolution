@@ -76,7 +76,7 @@ def connect_to_endpoint(url, headers):
     print("response status:", response.status_code)
     if response.status_code != 200:
         raise Exception(response.status_code, response.text)
-    return response.json()
+    return response.json(), (response.status_code == 200)
 
 def get_year(utc_str):
     return utc_str[:4]
@@ -126,7 +126,7 @@ def get_tweets_df(df_path):
                      }
     return tweets_df
 
-def gap4word(word, default_gap=24):
+def gap4word(word, default_gap=48):
     # Setting larger spans for infrequent words
     gaps_per_word = {'whadja':240,
                      "YooKay":240,
@@ -143,7 +143,9 @@ def get_word_tweets_df(word='yeet',
                        year=2010,
                        save_path="data",
                        num_dates=20,
-                       MIN_TWEETS_PER_WORD=200):
+                       MIN_TWEETS_PER_WORD=200,
+                       hour_gap=24,
+                       ):
     df_path = osp.join(save_path, "tweets_df_" + str(word) + ".csv")
     tweets_df = get_tweets_df(df_path=df_path)
     if len(tweets_df["word"]) >= MIN_TWEETS_PER_WORD:
@@ -152,16 +154,16 @@ def get_word_tweets_df(word='yeet',
     FIRST_DATE = datetime.datetime(year,1,1)
     bearer_token = auth()
     headers = create_headers(bearer_token)
-    date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=gap4word(word))
+    date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates,
+                                  hour_gap=gap4word(word, default_gap=hour_gap))
     for dt_spn in date_spans:
         print("getting tweets for ", dt_spn[0])
         try:
             start_date = datetime2apidate(dt_spn[0])
             end_date = datetime2apidate(dt_spn[1])
             url = create_url(word=word, start_time=start_date, end_time=end_date)
-            json_response = connect_to_endpoint(url, headers)
+            json_response, is_successful = connect_to_endpoint(url, headers)
             tweets_df = update_tweet_df(json_response=json_response, tweets_df=tweets_df, word=word)
-            time.sleep(15)
             #print(json.dumps(json_response, indent=4, sort_keys=True))
         except:
             continue
@@ -184,11 +186,10 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
             start_date = datetime2apidate(dt_spn[0])
             end_date = datetime2apidate(dt_spn[1])
             url = create_url(word=word, start_time=start_date, end_time=end_date)
-            json_response = connect_to_endpoint(url, headers)
+            json_response, is_successful = connect_to_endpoint(url, headers)
             num_tweets_with_word = get_tweet_count(json_response)
             T += 1
             total_num_tweets_with_word += num_tweets_with_word
-            time.sleep(15)
         except:
             continue
     if T == 0 :
@@ -208,7 +209,8 @@ def save_word_freqs(words_list):
     sys.stdout = original_stdout
 
 if __name__ == "__main__":
-    NUM_DATES=25
+    NUM_DATES=20
+    HOUR_GAP=48
 
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
@@ -228,7 +230,7 @@ if __name__ == "__main__":
 
     save_dir = os.path.join("data",PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
-    time.sleep(15 * 60)
+
     for k in range(0,args.iter):
         i = 0
         print("----- ", k, "-----")
@@ -236,7 +238,11 @@ if __name__ == "__main__":
             if word == "YooKay":
                 continue
             print("getting tweets for", word)
-            got_tweets = get_word_tweets_df(word, year=args.year, save_path=save_dir, num_dates=NUM_DATES)
+            got_tweets = get_word_tweets_df(word, year=args.year,
+                                            save_path=save_dir,
+                                            num_dates=NUM_DATES,
+                                            hour_gap=HOUR_GAP,
+                                            )
             if got_tweets: i += 1
             print("saved tweets for", word)
             ## Update slang word dataframe so that we don't sample tweets from this word again
@@ -244,7 +250,7 @@ if __name__ == "__main__":
             selected_words_df.loc[idx[0][0], 'is_saved'] = True
             selected_words_df.to_csv(words_path)
             ## Wait 15 minutes to avoid request rate restrictions
-            if i == 2:
+            if i == 3:
                 i = 0
                 print("will wait 15 minutes now")
                 time.sleep(15*60)
