@@ -7,7 +7,9 @@ from mlxtend.evaluate import permutation_test
 
 def independence_tests(slang_scores, nonslang_scores):
     t_test_statistic, t_test_pval = ttest_ind(slang_scores,nonslang_scores)
-    perm_test_pval = permutation_test(slang_scores,nonslang_scores)
+    perm_test_pval = permutation_test(slang_scores,nonslang_scores,
+                                      method="approximate", seed=111, num_rounds=10000
+                                      )
     print("t-test p-value is", t_test_pval, "and permutation test p-value is", perm_test_pval)
 
 polysemy_file_paths = {"slang": "word-lists/polysemy_slang.csv",
