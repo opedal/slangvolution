@@ -10,9 +10,13 @@ import numpy as np
 import time
 import argparse
 from os import path as osp
+import sys
 
 #andreas' token:
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
+#BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
+
+#Daphna's bearer token
+BEARER_TOKEN =  "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAvM92PZSwVJ%2Ba%2BOD5Pgi4N298uTI%3DBBY7UCntIx9eXHBqGRjgjQcjoDFlMgFGJCjzd65uKISX8VFpwc"
 
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
@@ -72,7 +76,7 @@ def connect_to_endpoint(url, headers):
     print("response status:", response.status_code)
     if response.status_code != 200:
         raise Exception(response.status_code, response.text)
-    return response.json()
+    return response.json(), (response.status_code == 200)
 
 def get_year(utc_str):
     return utc_str[:4]
@@ -122,8 +126,14 @@ def get_tweets_df(df_path):
                      }
     return tweets_df
 
-def gap4word(word, default_gap=24):
-    gaps_per_word = {'whadja':240}
+def gap4word(word, default_gap=48):
+    # Setting larger spans for infrequent words
+    gaps_per_word = {'whadja':240,
+                     "YooKay":240,
+                     "hasbian":240,
+                     "tardnation":240,
+                     "colitas":72,
+                     "Brotox":60}
     if word in gaps_per_word:
         return gaps_per_word[word]
     else:
@@ -131,9 +141,11 @@ def gap4word(word, default_gap=24):
 
 def get_word_tweets_df(word='yeet',
                        year=2010,
-                       save_path="data/tweets_old",
-                       num_dates=50,
-                       MIN_TWEETS_PER_WORD=200):
+                       save_path="data",
+                       num_dates=20,
+                       MIN_TWEETS_PER_WORD=200,
+                       hour_gap=24,
+                       ):
     df_path = osp.join(save_path, "tweets_df_" + str(word) + ".csv")
     tweets_df = get_tweets_df(df_path=df_path)
     if len(tweets_df["word"]) >= MIN_TWEETS_PER_WORD:
@@ -142,24 +154,24 @@ def get_word_tweets_df(word='yeet',
     FIRST_DATE = datetime.datetime(year,1,1)
     bearer_token = auth()
     headers = create_headers(bearer_token)
-    date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=gap4word(word))
+    date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates,
+                                  hour_gap=gap4word(word, default_gap=hour_gap))
     for dt_spn in date_spans:
-        print("getting tweets for ", dt_spn)
+        print("getting tweets for ", dt_spn[0])
         try:
             start_date = datetime2apidate(dt_spn[0])
             end_date = datetime2apidate(dt_spn[1])
             url = create_url(word=word, start_time=start_date, end_time=end_date)
-            json_response = connect_to_endpoint(url, headers)
+            json_response, is_successful = connect_to_endpoint(url, headers)
             tweets_df = update_tweet_df(json_response=json_response, tweets_df=tweets_df, word=word)
-            time.sleep(15)
             #print(json.dumps(json_response, indent=4, sort_keys=True))
         except:
             continue
     tweets_df = pd.DataFrame(tweets_df)
     tweets_df = tweets_df.drop_duplicates('text')
+    print("saving tweets for", word, "at", df_path)
     tweets_df.to_csv(df_path)
     return True
-
 
 def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
     FIRST_DATE = datetime.datetime(year, 1, 1)
@@ -174,11 +186,10 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
             start_date = datetime2apidate(dt_spn[0])
             end_date = datetime2apidate(dt_spn[1])
             url = create_url(word=word, start_time=start_date, end_time=end_date)
-            json_response = connect_to_endpoint(url, headers)
+            json_response, is_successful = connect_to_endpoint(url, headers)
             num_tweets_with_word = get_tweet_count(json_response)
             T += 1
             total_num_tweets_with_word += num_tweets_with_word
-            time.sleep(15)
         except:
             continue
     if T == 0 :
@@ -186,40 +197,61 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
     avg_num_tweets_with_word = total_num_tweets_with_word/T
     return avg_num_tweets_with_word
 
+def save_word_freqs(words_list):
+    original_stdout = sys.stdout
+    freqs = {}
+    for word in words_list:
+        with open('freqs.txt', 'w') as freqs_file:
+            sys.stdout = freqs_file  # Change the standard output to the file we created.
+            freq = approx_word_freq(word)
+            freqs[word] = freq
+            print("frequency of ", word, "is", freq)
+    sys.stdout = original_stdout
 
 if __name__ == "__main__":
+    NUM_DATES=20
+    HOUR_GAP=48
+
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
-    parser.add_argument("--period", type=str, default="old")
     parser.add_argument("--year", type=int, default=2010)
-    parser.add_argument("--save-dir", type=str, default="data/tweets_old")
+    parser.add_argument("--save-dir", type=str, default="data/")
     parser.add_argument("--iter", type=int, default=5)
     args = parser.parse_args()
 
     selected_words_df = pd.read_csv(words_path)
     words_list = list(selected_words_df[selected_words_df.type == args.type].word)
+    PATHS = {2010: "tweets_old",
+             2020:"tweets_new",
+             "slang":"slang_word_tweets",
+             "nonslang":"nonslang_word_tweets"
+             }
 
-    #rejected_words = ["coordinated"]
-    #for word in rejected_words:
-    #    words_list.remove(word)
-    freqs = {}
-    for word in words_list:
-        freq = approx_word_freq(word)
-        freqs[word] = freq
-        print("frequency of ", word, "is", freq)
+    save_dir = os.path.join("data",PATHS[args.year], PATHS[args.type])
+    print("saving tweets under", save_dir)
 
     for k in range(0,args.iter):
+        i = 0
         print("----- ", k, "-----")
         for word in words_list:
+            if word == "YooKay":
+                continue
             print("getting tweets for", word)
-            got_tweets = get_word_tweets_df(word, year=args.year, save_path=args.save_dir)
+            got_tweets = get_word_tweets_df(word, year=args.year,
+                                            save_path=save_dir,
+                                            num_dates=NUM_DATES,
+                                            hour_gap=HOUR_GAP,
+                                            )
+            if got_tweets: i += 1
             print("saved tweets for", word)
             ## Update slang word dataframe so that we don't sample tweets from this word again
             idx = np.where(selected_words_df.word == word)
             selected_words_df.loc[idx[0][0], 'is_saved'] = True
             selected_words_df.to_csv(words_path)
             ## Wait 15 minutes to avoid request rate restrictions
-            if got_tweets:
+            if i == 3:
+                i = 0
                 print("will wait 15 minutes now")
-                time.sleep(60*15)
+                time.sleep(15*60)
+                print("finished waiting")
