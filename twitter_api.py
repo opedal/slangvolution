@@ -202,6 +202,7 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
             continue
     if T == 0 :
         return -1
+    print("there were",T,"succesfull requests")
     avg_num_tweets_with_word = total_num_tweets_with_word/T
     return avg_num_tweets_with_word
 
@@ -239,7 +240,7 @@ if __name__ == "__main__":
 
     save_dir = os.path.join(args.save_dir,PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
-    num_words_until_pause = np.ceil(REQUEST_LIMIT/args.num_dates)
+    num_words_until_pause = np.ceil(REQUEST_LIMIT/args.num_dates) + 1
     for k in range(0,args.iter):
         i = 0
         print("----- ", k, "-----")

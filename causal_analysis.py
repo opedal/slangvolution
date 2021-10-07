@@ -16,6 +16,16 @@ polysemy_file_paths = {"slang": "word-lists/polysemy_slang.csv",
                        "nonslang":"word-lists/polysemy_nonslang.csv"
                        }
 
+freq_file_paths = {"slang": "data/frequencies/freq_slang.csv",
+                    "nonslang":"data/frequencies/freq_nonslang.csv"
+                       }
+
+slang_freq_df = pd.read_csv(freq_file_paths["slang"])
+plt.hist(slang_freq_df.freq.values, color="orange")
+plt.xlabel("# occurrences in 48 hours")
+plt.title("frequency of slang words in 2010")
+plt.show()
+
 slang_polysemy_df = pd.read_csv(polysemy_file_paths["slang"])
 nonslang_polysemy_df = pd.read_csv(polysemy_file_paths["nonslang"])
 
