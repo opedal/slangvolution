@@ -134,13 +134,14 @@ def check_example_words():
     return
 
 if __name__ == '__main__':
+    average_frequency()
     #words_of_interest = ["bromance", "bling","fam", "lowkey","unicorn", "they","performative","haircut","inclusive"]
     #["haircut", "inclusive", "bling", "chillax"]
     #["fam", "lowkey","unicorn", "they","performative","haircut", "inclusive", "bling", "chillax"]
     REQUEST_LIMIT = 300
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
-    parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
+    parser.add_argument("--type", type=str, default="nonslang") #{"slang","nonslang","both"}
     parser.add_argument("--year", type=int, default=2020)
     parser.add_argument("--save-dir", type=str, default="data/frequencies/")
     parser.add_argument("--iter", type=int, default=5)
@@ -162,6 +163,8 @@ if __name__ == '__main__':
     i = 0
     #time.sleep(15*60)
     for word in words_list:
+        if word in ["clinkstone", "camara"]:
+            continue
         word = word.lower()
         freq_df = pd.read_csv(freq_file_path)
         if word in freq_df.word.values:
