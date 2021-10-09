@@ -30,6 +30,10 @@ REPR_PATHS = {'slang': {"old": "old_slang_reps.pickle",
               'nonslang': {
                   "old": "old_nonslang_reps.pickle",
                   "new": "new_nonslang_reps.pickle"
+                        },
+              'hybrid': {
+                  "old": "old_hybrid_reps.pickle",
+                  "new": "new_hybrid_reps.pickle"
               }
               }
 
@@ -500,18 +504,15 @@ def inner_APD_scores(corpus_reps, targets, dim=100, MIN_TWEETS=50):
                                                                           dist="combined2"))
     return scores
 
-def get_data_for_tweets(type='slang'):
-    words_df = pd.read_csv("selected_words.csv")
-    if type=='slang': target_words = words_df.slang
-    elif type=='nonslang': target_words = words_df.nonslang
+def get_data_for_tweets(type='slang', path="data/"):
 
-    old_reps_path = REPR_PATHS[type]['old']
-    old_reps = load_corpus_reps(old_reps_path)
+    old_reps_name = REPR_PATHS[type]['old']
+    old_reps = load_corpus_reps(path + old_reps_name)
 
-    new_reps_path = REPR_PATHS[type]['new']
-    new_reps = load_corpus_reps(new_reps_path)
+    new_reps_name = REPR_PATHS[type]['new']
+    new_reps = load_corpus_reps(path + new_reps_name)
 
-    return target_words, old_reps, new_reps
+    return old_reps, new_reps
 
 def get_data_for_semeval(path="/Users/alacrity/Documents/uni/CSNLP/project/semeval2020_ulscd_eng/targets.txt"):
     with open(path) as f:
