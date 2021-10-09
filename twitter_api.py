@@ -49,7 +49,7 @@ def datetime2apidate(dt):
 def auth():
     return BEARER_TOKEN
 
-def create_url(word,start_time,end_time):
+def create_url(word,start_time,end_time, max_results=500):
     query = word+", lang:en"
     #"from:twitterdev -is:retweet"
     # Tweet fields are adjustable.
@@ -61,9 +61,10 @@ def create_url(word,start_time,end_time):
     # source, text, and withheld
     start_time = "start_time="+start_time #2021-01-17T00:00:00Z"
     end_time = "end_time="+end_time #2021-01-18T00:00:00Z"
+    max_results_str = "max_results="+str(max_results)
     tweet_fields = "tweet.fields=author_id,created_at"
     url = "https://api.twitter.com/2/tweets/search/all?query={}&{}&{}&{}".format(
-        query, start_time, end_time, tweet_fields
+        query, start_time, end_time, max_results_str, tweet_fields
     )
     return url
 
@@ -133,7 +134,13 @@ def gap4word(word, default_gap=48):
                      "hasbian":240,
                      "tardnation":240,
                      "colitas":72,
-                     "Brotox":60}
+                     "brotox":120,
+                     "Brotox":120,
+                     "punanni":120,
+                     "Baltimoron":240,
+                     "zories":240,
+                     "incel":240,
+                     }
     if word in gaps_per_word:
         return gaps_per_word[word]
     else:
@@ -188,12 +195,14 @@ def approx_word_freq(word, year=2010, num_dates=11, hour_gap=0.5):
             url = create_url(word=word, start_time=start_date, end_time=end_date)
             json_response, is_successful = connect_to_endpoint(url, headers)
             num_tweets_with_word = get_tweet_count(json_response)
-            T += 1
-            total_num_tweets_with_word += num_tweets_with_word
+            if is_successful:
+                T += 1
+                total_num_tweets_with_word += num_tweets_with_word
         except:
             continue
     if T == 0 :
-        return total_num_tweets_with_word
+        return -1
+    print("there were",T,"succesfull requests")
     avg_num_tweets_with_word = total_num_tweets_with_word/T
     return avg_num_tweets_with_word
 
@@ -209,8 +218,7 @@ def save_word_freqs(words_list):
     sys.stdout = original_stdout
 
 if __name__ == "__main__":
-    NUM_DATES=20
-    HOUR_GAP=48
+    REQUEST_LIMIT=50
 
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
@@ -218,6 +226,8 @@ if __name__ == "__main__":
     parser.add_argument("--year", type=int, default=2010)
     parser.add_argument("--save-dir", type=str, default="data/")
     parser.add_argument("--iter", type=int, default=5)
+    parser.add_argument("--hour-gap",type=int,default=48)
+    parser.add_argument("--num-dates",type=int,default=20)
     args = parser.parse_args()
 
     selected_words_df = pd.read_csv(words_path)
@@ -228,20 +238,20 @@ if __name__ == "__main__":
              "nonslang":"nonslang_word_tweets"
              }
 
-    save_dir = os.path.join("data",PATHS[args.year], PATHS[args.type])
+    save_dir = os.path.join(args.save_dir,PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
-
+    num_words_until_pause = np.ceil(REQUEST_LIMIT/args.num_dates) + 1
     for k in range(0,args.iter):
         i = 0
         print("----- ", k, "-----")
         for word in words_list:
-            if word == "YooKay":
+            if word == "YooKay" or word == "tardnation" or word == "zories":
                 continue
             print("getting tweets for", word)
             got_tweets = get_word_tweets_df(word, year=args.year,
                                             save_path=save_dir,
-                                            num_dates=NUM_DATES,
-                                            hour_gap=HOUR_GAP,
+                                            num_dates=args.num_dates,
+                                            hour_gap=args.hour_gap,
                                             )
             if got_tweets: i += 1
             print("saved tweets for", word)
@@ -250,7 +260,7 @@ if __name__ == "__main__":
             selected_words_df.loc[idx[0][0], 'is_saved'] = True
             selected_words_df.to_csv(words_path)
             ## Wait 15 minutes to avoid request rate restrictions
-            if i == 3:
+            if i == num_words_until_pause:
                 i = 0
                 print("will wait 15 minutes now")
                 time.sleep(15*60)
