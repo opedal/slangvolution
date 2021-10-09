@@ -166,7 +166,7 @@ def sentences2representations(target, sentences, model, tokenizer, reps):
 def tweets2representatons(targets, model, tokenizer, reps="sum", data_path="slang_word_tweets"):
     repr_dict = {}
     text_dict = {}
-    for word in targets:
+    for word in tqdm(targets):
         word_df_path = os.path.join(data_path, "tweets_df_"+str(word)+".csv")
         try:
             word_df = pd.read_csv(word_df_path)
@@ -185,14 +185,11 @@ def tweets2representatons(targets, model, tokenizer, reps="sum", data_path="slan
         print("for "+  str(word) + ": kept", len(decoded_sentences), "tweets out of", len(sentences))
     return repr_dict, text_dict
 
-def get_tweet_reprs(reps="sum", data_path="slang_word_tweets",
-                    word_path="slang_words_100.csv",
+def get_tweet_reprs(words_list, reps="sum", data_path="slang_word_tweets",
                     model_path="models/roberta_UD_5e-05"):
     model = AutoModelForMaskedLM.from_pretrained(model_path)
     tokenizer = AutoTokenizer.from_pretrained('roberta-base')
 
-    selected_words_df = pd.read_csv(word_path)
-    words_list = list(selected_words_df.selected_words)
     repr_dict, text_dict = tweets2representatons(targets=words_list,
                                                  model=model,
                                                  tokenizer=tokenizer,
@@ -205,8 +202,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--sem-eval", type=bool, default=False)
     parser.add_argument("--reps", type=str, default="sum")
-    parser.add_argument("--data-path", type=str, default='data/nonslang_word_tweets_old')
-    parser.add_argument("--slang", type=bool, default=True)
+    parser.add_argument("--data-path", type=str, default='data/tweets_old/slang_word_tweets')
+    parser.add_argument("--type", type=str, default="slang")
     parser.add_argument("--semeval-path", type=str, default='data/semeval2020_ulscd_eng')
     parser.add_argument("--model-path",type=str,default="models/roberta_UD")
     args = parser.parse_args()
@@ -239,11 +236,9 @@ if __name__ == '__main__':
 
     else:
         data_path = args.data_path
-        selected_words_df = pd.read_csv("selected_words.csv")
-        if args.slang:
-            words_list = list(selected_words_df.slang)
-        else:
-            words_list = list(selected_words_df.nonslang)
+        words_path = "word-lists/all_words_300.csv"
+        selected_words_df = pd.read_csv(words_path)
+        words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 
         counter = 0
         for word in words_list:
@@ -260,22 +255,11 @@ if __name__ == '__main__':
 
         print("There are", counter, "complete files")
 
-        if args.slang:
-            repr_dict, text_dict = get_tweet_reprs(reps=args.reps, data_path=args.data_path.split("/")[-1],
-                                                   word_path="slang_words_100.csv")
+        repr_dict, text_dict = get_tweet_reprs(words_list=words_list,
+                                               reps=args.reps, data_path=args.data_path)
 
-            with open(args.data_path[-3:]+'_slang_reps.pickle', 'wb') as handle:
-                pickle.dump(repr_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_reps.pickle', 'wb') as handle:
+            pickle.dump(repr_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            with open(args.data_path[-3:]+'_slang_tweets.pickle', 'wb') as handle:
-                pickle.dump(text_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-        else:
-            repr_dict, text_dict = get_tweet_reprs(reps=args.reps, data_path=args.data_path.split("/")[-1],
-                                                   word_path="nonslang_words_100.csv")
-
-            with open(args.data_path[-3:]+'_nonslang_reps.pickle', 'wb') as handle:
-                pickle.dump(repr_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-            with open(args.data_path[-3:]+'_nonslang_tweets.pickle', 'wb') as handle:
-                pickle.dump(text_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_tweets.pickle', 'wb') as handle:
+            pickle.dump(text_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
