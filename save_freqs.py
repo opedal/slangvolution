@@ -18,10 +18,10 @@ num_words = 100
 sample_words = np.random.choice(word_list, num_words)
 
 #andreas' token:
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
+#BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
 
 #Daphna's bearer token
-#BEARER_TOKEN =  "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAvM92PZSwVJ%2Ba%2BOD5Pgi4N298uTI%3DBBY7UCntIx9eXHBqGRjgjQcjoDFlMgFGJCjzd65uKISX8VFpwc"
+BEARER_TOKEN =  "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAvM92PZSwVJ%2Ba%2BOD5Pgi4N298uTI%3DBBY7UCntIx9eXHBqGRjgjQcjoDFlMgFGJCjzd65uKISX8VFpwc"
 
 def average_frequency():
     file_names = { "slang 2020" : 'data/frequencies/freq_slang_counts_24h_2020.csv',
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="sample") #{"slang","nonslang","both"}
-    parser.add_argument("--year", type=int, default=2010)
+    parser.add_argument("--year", type=int, default=2020)
     parser.add_argument("--save-dir", type=str, default="data/frequencies/")
     parser.add_argument("--iter", type=int, default=5)
     parser.add_argument("--hour-gap",type=int,default=48)

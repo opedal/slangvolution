@@ -152,6 +152,7 @@ def get_word_tweets_df(word='yeet',
                        num_dates=20,
                        MIN_TWEETS_PER_WORD=200,
                        hour_gap=24,
+                       max_results_per_response=500,
                        ):
     df_path = osp.join(save_path, "tweets_df_" + str(word) + ".csv")
     tweets_df = get_tweets_df(df_path=df_path)
@@ -168,7 +169,7 @@ def get_word_tweets_df(word='yeet',
         try:
             start_date = datetime2apidate(dt_spn[0])
             end_date = datetime2apidate(dt_spn[1])
-            url = create_url(word=word, start_time=start_date, end_time=end_date)
+            url = create_url(word=word, start_time=start_date, end_time=end_date,max_results=max_results_per_response)
             json_response, is_successful = connect_to_endpoint(url, headers)
             tweets_df = update_tweet_df(json_response=json_response, tweets_df=tweets_df, word=word)
             #print(json.dumps(json_response, indent=4, sort_keys=True))
@@ -228,6 +229,7 @@ if __name__ == "__main__":
     parser.add_argument("--iter", type=int, default=5)
     parser.add_argument("--hour-gap",type=int,default=48)
     parser.add_argument("--num-dates",type=int,default=20)
+    parser.add_argument("--max-results",type=int,default=500)
     args = parser.parse_args()
 
     selected_words_df = pd.read_csv(words_path)
@@ -252,6 +254,7 @@ if __name__ == "__main__":
                                             save_path=save_dir,
                                             num_dates=args.num_dates,
                                             hour_gap=args.hour_gap,
+                                            max_results_per_response=args.max_results
                                             )
             if got_tweets: i += 1
             print("saved tweets for", word)
