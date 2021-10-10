@@ -223,7 +223,7 @@ if __name__ == "__main__":
 
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
-    parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
+    parser.add_argument("--type", type=str, default="both") #{"slang","nonslang","both"}
     parser.add_argument("--year", type=int, default=2020)
     parser.add_argument("--save-dir", type=str, default="data/")
     parser.add_argument("--iter", type=int, default=5)
@@ -237,7 +237,8 @@ if __name__ == "__main__":
     PATHS = {2010: "tweets_old",
              2020:"tweets_new",
              "slang":"slang_word_tweets",
-             "nonslang":"nonslang_word_tweets"
+             "nonslang":"nonslang_word_tweets",
+             "both":"hybrid_word_tweets"
              }
 
     save_dir = os.path.join(args.save_dir,PATHS[args.year], PATHS[args.type])
@@ -247,8 +248,6 @@ if __name__ == "__main__":
         i = 0
         print("----- ", k, "-----")
         for word in words_list:
-            if word not in ["chillax", "bling", "lowkey"]:
-                continue
             print("getting tweets for", word)
             got_tweets = get_word_tweets_df(word, year=args.year,
                                             save_path=save_dir,
