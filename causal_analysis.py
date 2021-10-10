@@ -4,7 +4,6 @@ import numpy as np
 from scipy.stats import ttest_ind
 from mlxtend.evaluate import permutation_test
 
-
 def independence_tests(slang_scores, nonslang_scores):
     t_test_statistic, t_test_pval = ttest_ind(slang_scores,nonslang_scores)
     perm_test_pval = permutation_test(slang_scores,nonslang_scores,

@@ -10,6 +10,12 @@ import numpy as np
 import time
 import argparse
 import sys
+import nltk
+# nltk.download()
+from nltk.corpus import words
+word_list = words.words()
+num_words = 100
+sample_words = np.random.choice(word_list, num_words)
 
 #andreas' token:
 BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
@@ -22,6 +28,8 @@ def average_frequency():
                    "slang 2010" : 'data/frequencies/freq_slang_counts_24h_2010.csv',
                    "nonslang 2020": 'data/frequencies/freq_nonslang_counts_24h_2020.csv',
                    "nonslang 2010": 'data/frequencies/freq_nonslang_counts_24h_2010.csv',
+                   "sample 2020": 'data/frequencies/freq_sample_words_24h_2020.csv',
+                   "sample 2010": 'data/frequencies/freq_sample_words_24h_2010.csv',
     }
     avgs = {}
     for (k,fn) in file_names.items():
@@ -33,6 +41,8 @@ def average_frequency():
           avgs["nonslang 2020"]/avgs["nonslang 2010"])
     print("the frequency of slang words between 2010 and 2020, increased times ",
           avgs["slang 2020"]/avgs["slang 2010"])
+    print("the frequency of sample words between 2010 and 2020, increased times ",
+          avgs["sample 2020"]/avgs["sample 2010"])
 
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
@@ -134,14 +144,15 @@ def check_example_words():
     return
 
 if __name__ == '__main__':
+    average_frequency()
     #words_of_interest = ["bromance", "bling","fam", "lowkey","unicorn", "they","performative","haircut","inclusive"]
     #["haircut", "inclusive", "bling", "chillax"]
     #["fam", "lowkey","unicorn", "they","performative","haircut", "inclusive", "bling", "chillax"]
     REQUEST_LIMIT = 300
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
-    parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
-    parser.add_argument("--year", type=int, default=2020)
+    parser.add_argument("--type", type=str, default="sample") #{"slang","nonslang","both"}
+    parser.add_argument("--year", type=int, default=2010)
     parser.add_argument("--save-dir", type=str, default="data/frequencies/")
     parser.add_argument("--iter", type=int, default=5)
     parser.add_argument("--hour-gap",type=int,default=48)
@@ -149,13 +160,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     selected_words_df = pd.read_csv(words_path)
-    words_list = list(selected_words_df[selected_words_df.type == args.type].word)
-    PATHS = {"slang":"freq_slang_counts_24h_2020.csv",
-             "nonslang":"freq_nonslang_counts_24h_2020.csv"
+    #words_list = list(selected_words_df[selected_words_df.type == args.type].word)
+    PATHS = {"slang2010":"freq_slang_counts_24h_2010.csv",
+             "slang2020": "freq_slang_counts_24h_2020.csv",
+             "nonslang2010":"freq_nonslang_counts_24h_2010.csv",
+             "nonslang2020":"freq_nonslang_counts_24h_2020.csv",
+             "sample2010": "freq_sample_words_24h_2010.csv",
+             "sample2020": "freq_sample_words_24h_2020.csv",
              }
-
-    freq_file_path = os.path.join(args.save_dir, PATHS[args.type])
-    #freq_file_path = "data/frequencies/words_of_interest_freqs.csv"
+    sample_words_df = pd.read_csv("sample_words.csv")
+    words_list = sample_words_df["sample"].values
+    freq_file_path = os.path.join(args.save_dir, PATHS[args.type + str(args.year)])
+    #freq_file_path = "data/frequencies/words_of_interest_freqs2020.csv"
     print("saving word frequencies under", freq_file_path)
     num_words_until_pause = np.ceil(REQUEST_LIMIT/args.num_dates)
     hour_gap=24
