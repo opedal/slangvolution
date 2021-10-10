@@ -49,7 +49,7 @@ def datetime2apidate(dt):
 def auth():
     return BEARER_TOKEN
 
-def create_url(word,start_time,end_time, max_results=500):
+def create_url(word,start_time, end_time, max_results=500):
     query = word+", lang:en"
     #"from:twitterdev -is:retweet"
     # Tweet fields are adjustable.
@@ -63,7 +63,7 @@ def create_url(word,start_time,end_time, max_results=500):
     end_time = "end_time="+end_time #2021-01-18T00:00:00Z"
     max_results_str = "max_results="+str(max_results)
     tweet_fields = "tweet.fields=author_id,created_at"
-    url = "https://api.twitter.com/2/tweets/search/all?query={}&{}&{}&{}".format(
+    url = "https://api.twitter.com/2/tweets/search/all?query={}&{}&{}&{}&{}".format(
         query, start_time, end_time, max_results_str, tweet_fields
     )
     return url
