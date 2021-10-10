@@ -203,7 +203,7 @@ if __name__ == '__main__':
     parser.add_argument("--sem-eval", type=bool, default=False)
     parser.add_argument("--reps", type=str, default="sum")
     parser.add_argument("--data-path", type=str, default='data/tweets_old/slang_word_tweets')
-    parser.add_argument("--type", type=str, default="slang")
+    parser.add_argument("--type", type=str, default=["chillax", "bling", "lowkey"]) #["slang","nonslang","hybrid",[CUSTOM_LIST]]
     parser.add_argument("--semeval-path", type=str, default='data/semeval2020_ulscd_eng')
     parser.add_argument("--model-path",type=str,default="models/roberta_UD")
     args = parser.parse_args()
@@ -236,30 +236,43 @@ if __name__ == '__main__':
 
     else:
         data_path = args.data_path
-        words_path = "word-lists/all_words_300.csv"
-        selected_words_df = pd.read_csv(words_path)
-        words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 
-        counter = 0
-        for word in words_list:
-            word_df_path = os.path.join(data_path, "tweets_df_" + str(word) + ".csv")
-            print(word_df_path)
-            try:
-                word_df = pd.read_csv(word_df_path, lineterminator='\n')
-                if len(word_df.word) < 200:
-                    print(word, "only has", len(word_df.word), "tweets")
-                else:
-                    counter += 1
-            except:
-                print(word, "is not working")
+        if args.type in ["slang","nonslang","hybrid"]:
 
-        print("There are", counter, "complete files")
+            words_path = "word-lists/all_words_300.csv"
+            selected_words_df = pd.read_csv(words_path)
+            words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 
-        repr_dict, text_dict = get_tweet_reprs(words_list=words_list,
-                                               reps=args.reps, data_path=args.data_path)
+            counter = 0
+            for word in words_list:
+                word_df_path = os.path.join(data_path, "tweets_df_" + str(word) + ".csv")
+                print(word_df_path)
+                try:
+                    word_df = pd.read_csv(word_df_path, lineterminator='\n')
+                    if len(word_df.word) < 200:
+                        print(word, "only has", len(word_df.word), "tweets")
+                    else:
+                        counter += 1
+                except:
+                    print(word, "is not working")
 
-        with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_reps.pickle', 'wb') as handle:
-            pickle.dump(repr_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            print("There are", counter, "complete files")
 
-        with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_tweets.pickle', 'wb') as handle:
-            pickle.dump(text_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            repr_dict, text_dict = get_tweet_reprs(words_list=words_list,
+                                                   reps=args.reps, data_path=args.data_path)
+
+            with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_reps.pickle', 'wb') as handle:
+                pickle.dump(repr_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+            with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_tweets.pickle', 'wb') as handle:
+                pickle.dump(text_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        else:
+            repr_dict, text_dict = get_tweet_reprs(words_list=args.type,
+                                                   reps=args.reps, data_path=args.data_path)
+
+            with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_reps.pickle', 'wb') as handle:
+                pickle.dump(repr_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+            with open("data/" + data_path.split("/")[1].split("_")[1] + f'_{args.type}_tweets.pickle', 'wb') as handle:
+                pickle.dump(text_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)

@@ -224,12 +224,12 @@ if __name__ == "__main__":
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
-    parser.add_argument("--year", type=int, default=2010)
+    parser.add_argument("--year", type=int, default=2020)
     parser.add_argument("--save-dir", type=str, default="data/")
     parser.add_argument("--iter", type=int, default=5)
     parser.add_argument("--hour-gap",type=int,default=48)
     parser.add_argument("--num-dates",type=int,default=20)
-    parser.add_argument("--max-results",type=int,default=500)
+    parser.add_argument("--max-results",type=int,default=30)
     args = parser.parse_args()
 
     selected_words_df = pd.read_csv(words_path)
@@ -247,7 +247,7 @@ if __name__ == "__main__":
         i = 0
         print("----- ", k, "-----")
         for word in words_list:
-            if word == "YooKay" or word == "tardnation" or word == "zories":
+            if word not in ["chillax", "bling", "lowkey"]:
                 continue
             print("getting tweets for", word)
             got_tweets = get_word_tweets_df(word, year=args.year,
