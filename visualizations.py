@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+SLANG_COLOR="darkorange"
+NONSLANG_COLOR="mediumslateblue"
 
 class Label2Color:
 
