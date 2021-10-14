@@ -129,7 +129,7 @@ if __name__ == '__main__':
     REQUEST_LIMIT = 300
     words_path = "word-lists/all_words_300.csv"
     parser = argparse.ArgumentParser()
-    parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
+    parser.add_argument("--type", type=str, default="both") #{"slang","nonslang","both","sample"}
     parser.add_argument("--year", type=int, default=2010)
     parser.add_argument("--save-dir", type=str, default="data/frequencies/")
     parser.add_argument("--iter", type=int, default=5)
@@ -143,11 +143,13 @@ if __name__ == '__main__':
              "slang2020": "freq_slang_counts_24h_2020.csv",
              "nonslang2010":"freq_nonslang_counts_24h_2010.csv",
              "nonslang2020":"freq_nonslang_counts_24h_2020.csv",
+             "both2010": "freq_hybrid_counts_24h_2010.csv",
+             "both2020": "freq_hybrid_counts_24h_2020.csv",
              "sample2010": "freq_sample_words_24h_2010.csv",
              "sample2020": "freq_sample_words_24h_2020.csv",
              }
 
-    sample_words_df = pd.read_csv("sample_words.csv")
+    #sample_words_df = pd.read_csv("sample_words.csv")
     #words_list = sample_words_df["sample"].values
     freq_file_path = os.path.join(args.save_dir, PATHS[args.type + str(args.year)])
     #freq_file_path = "data/frequencies/words_of_interest_freqs2020.csv"

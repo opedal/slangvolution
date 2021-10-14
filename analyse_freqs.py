@@ -9,6 +9,8 @@ file_names = {"slang 2020": 'data/frequencies/freq_slang_counts_24h_2020.csv',
               "nonslang 2010": 'data/frequencies/freq_nonslang_counts_24h_2010.csv',
               "sample 2020": 'data/frequencies/freq_sample_words_24h_2020.csv',
               "sample 2010": 'data/frequencies/freq_sample_words_24h_2010.csv',
+              "hybrid 2010": "data/frequencies/freq_hybrid_counts_24h_2010.csv",
+              "hybrid 2020": "data/frequencies/freq_hybrid_counts_24h_2020.csv",
               }
 
 def divide_by_larger_freq(X, colname1="freq2020", colname2="freq2010"):
@@ -49,12 +51,16 @@ def freq_difference():
     slang2020 = pd.read_csv(file_names["slang 2020"])
     s_all = merge_freq_dfs(slang2010, slang2020)
     s_all.to_csv("data/frequencies/slang_all_freqs.csv")
-    s_all = s_all[s_all.freq_diff < 10000]
 
     ns2010 = pd.read_csv(file_names["nonslang 2010"])
     ns2020 = pd.read_csv(file_names["nonslang 2020"])
     ns_all = merge_freq_dfs(ns2010, ns2020)
     ns_all.to_csv("data/frequencies/nonslang_all_freqs.csv")
+
+    h2010 = pd.read_csv(file_names["hybrid 2010"])
+    h2020 = pd.read_csv(file_names["hybrid 2020"])
+    h_all = merge_freq_dfs(h2010, h2020)
+    h_all.to_csv("data/frequencies/hybrid_all_freqs.csv")
 
     sample2010 = pd.read_csv(file_names["sample 2010"])
     sample2020 = pd.read_csv(file_names["sample 2020"])
@@ -70,8 +76,22 @@ def plot_slang_nonslang_comparison(s_all, ns_all, curr_col="abs_diff2_norm",
              color=["mediumslateblue", "darkorange"],
              bins=bins)
     plt.legend()
-    plt.title(title+" between 2010 and 2020 frequencies \n slang versus nonslang")
+    plt.xlabel("log(2020 frequency/2010 frequency)")
+    plt.title("Frequency change between 2010 and 2020")
     plt.show()
+
+def plot_3cat_comparison(s_all, ns_all,h_all):
+    curr_col = "log_diff"
+    plt.hist([ns_all[curr_col], s_all[curr_col], h_all[curr_col]],
+             label=["nonslang", "slang", "hybrid"],
+             #"xkcd:robin's egg"
+             color=["mediumslateblue", "darkorange", "xkcd:bright sky blue"],
+             bins=22)
+    plt.legend()
+    plt.xlabel("log(2020 frequency/2010 frequency)")
+    plt.title("Frequency change between 2010 and 2020")
+    plt.show()
+
 
 def print_slang_nonslang_comparison(s_all, ns_all):
     print("results for normalized absolute distance using normalized 2020:")
