@@ -202,8 +202,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--sem-eval", type=bool, default=False)
     parser.add_argument("--reps", type=str, default="sum")
-    parser.add_argument("--data-path", type=str, default='data/tweets_old/slang_word_tweets')
-    parser.add_argument("--type", type=str, default=["chillax", "bling", "lowkey"]) #["slang","nonslang","hybrid",[CUSTOM_LIST]]
+    parser.add_argument("--data-path", type=str, default='data/tweets_new/hybrid_word_tweets')
+    parser.add_argument("--type", type=str, default="both") #["slang","nonslang","both",[CUSTOM_LIST]]
     parser.add_argument("--semeval-path", type=str, default='data/semeval2020_ulscd_eng')
     parser.add_argument("--model-path",type=str,default="models/roberta_UD")
     args = parser.parse_args()
@@ -237,7 +237,7 @@ if __name__ == '__main__':
     else:
         data_path = args.data_path
 
-        if args.type in ["slang","nonslang","hybrid"]:
+        if args.type in ["slang","nonslang","both"]:
 
             words_path = "word-lists/all_words_300.csv"
             selected_words_df = pd.read_csv(words_path)
