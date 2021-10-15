@@ -5,7 +5,7 @@ from scipy.stats import ttest_ind
 from mlxtend.evaluate import permutation_test
 import copy
 import random
-from permutation_test import permtest
+from visualizations import plot_log_freqs_change
 
 def exact_mc_perm_test(xs, ys, nmc):
     n, k = len(xs), 0
@@ -16,7 +16,7 @@ def exact_mc_perm_test(xs, ys, nmc):
         k += diff < np.abs(np.mean(zs[:n]) - np.mean(zs[n:]))
     return k / nmc
 
-def my_permutation_test(x, y):
+def other_perm_test(x, y):
     gT = np.abs(np.average(x) - np.average(y))
     #Pool variables into one single distribution:
     pV = list(x) + list(y)
@@ -35,7 +35,6 @@ def my_permutation_test(x, y):
     p_val = len(np.where(pD >= gT)[0]) / p
     return p_val
 
-
 def independence_tests(slang_scores, nonslang_scores):
     t_test_statistic, t_test_pval = ttest_ind(slang_scores,nonslang_scores)
     perm_test_pval = permutation_test(slang_scores, nonslang_scores,
@@ -43,16 +42,16 @@ def independence_tests(slang_scores, nonslang_scores):
                                       )
     print("t-test p-value is", t_test_pval, "and permutation test p-value is", perm_test_pval)
 
-polysemy_file_paths = {"slang": "word-lists/polysemy_slang.csv",
-                       "nonslang":"word-lists/polysemy_nonslang.csv",
-                       "hybrid": "word-lists/polysemy_hybrid.csv",
-                       }
-
-freq_file_paths = {"slang": "data/frequencies/freq_slang_counts_24h_2010.csv",
-                   "nonslang":"data/frequencies/freq_nonslang_counts_24h_2010.csv"
-                  }
-
 if __name__ == '__main__':
+
+    polysemy_file_paths = {"slang": "word-lists/polysemy_slang.csv",
+                           "nonslang": "word-lists/polysemy_nonslang.csv",
+                           "hybrid": "word-lists/polysemy_hybrid.csv",
+                           }
+
+    freq_file_paths = {"slang": "data/frequencies/freq_slang_counts_24h_2010.csv",
+                       "nonslang": "data/frequencies/freq_nonslang_counts_24h_2010.csv"
+                       }
 
     causal_df = pd.read_csv("word-lists/causal_data_input.csv")
 
@@ -63,14 +62,7 @@ if __name__ == '__main__':
     slang_freq_df = pd.read_csv(freq_file_paths["slang"])
     nonslang_freq_df = pd.read_csv(freq_file_paths["nonslang"])
 
-    plt.hist([[np.log(k) for k in slang_freq_df.freq.values],
-              [np.log(k) for k in nonslang_freq_df.freq.values]],
-             color=["darkorange","mediumslateblue"],
-             label=["slang","nonslang"])
-    plt.xlabel("log of # occurrences in 24 hours")
-    plt.legend()
-    plt.title("log-frequency of words in 2010")
-    plt.show()
+    plot_log_freqs_change(slang_freq_df=slang_freq_df, nonslang_freq_df=nonslang_freq_df)
 
     slang_polysemy_df = pd.read_csv(polysemy_file_paths["slang"])
     nonslang_polysemy_df = pd.read_csv(polysemy_file_paths["nonslang"])

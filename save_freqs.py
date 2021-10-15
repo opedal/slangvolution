@@ -1,27 +1,16 @@
 import requests
 import os
-import json
 import datetime
 import random
 import pandas as pd
 import numpy as np
-# To set your environment variables in your terminal run the following line:
-# export 'BEARER_TOKEN'='<your_bearer_token>'
 import time
 import argparse
 import sys
-import nltk
-# nltk.download()
 from nltk.corpus import words
 word_list = words.words()
 num_words = 100
 sample_words = np.random.choice(word_list, num_words)
-
-#andreas' token:
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt" # INSERT TOKEN
-
-#Daphna's bearer token
-#BEARER_TOKEN =  "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAvM92PZSwVJ%2Ba%2BOD5Pgi4N298uTI%3DBBY7UCntIx9eXHBqGRjgjQcjoDFlMgFGJCjzd65uKISX8VFpwc"
 
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
@@ -108,19 +97,6 @@ def approx_freq(word, year=2010, num_dates=20, hour_gap=6):
     if T <= 0: return -1
     avg_count = total_count/T
     return avg_count
-
-def check_example_words():
-    #time.sleep(15*60)
-    # for word in ["fam", "noob"]:
-    #     # ["lowkey", "noob","chillax","bling", "bromance", ]
-    #     for year in [2010,2020]:
-    #         freq = approx_word_freq(word,
-    #                                 year=year,
-    #                                 num_dates=args.num_dates,
-    #                                 hour_gap=2,
-    #                                 )
-    #         print("freq for",word, "in",year,"is", freq)
-    return
 
 if __name__ == '__main__':
     #words_of_interest = ["bromance", "bling","fam", "lowkey","unicorn", "they","performative","haircut","inclusive"]
