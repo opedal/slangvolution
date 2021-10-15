@@ -30,7 +30,7 @@ class Label2Color:
         else:
             return self.DEFAULT_COLOR
 
-def plot_year_histogram(years, bin_num=10, color='dodgerblue',
+def plot_year_histogram(years, bin_num=10, color='mediumslateblue',
                         title="Distribution of years in which the definitions were posted"):
     fig, ax = plt.subplots(figsize=(4,1.7))
 
@@ -40,8 +40,8 @@ def plot_year_histogram(years, bin_num=10, color='dodgerblue',
     plt.show()
 
 def plot_numlikes_dislikes(defs):
-    plt.plot(sorted(list(defs.num_likes))[::-1], color='dodgerblue', label='number of upvotes')
-    plt.plot(sorted(list(defs.num_dislikes))[::-1], color='indianred', label='number of downvotes')
+    plt.plot(sorted(list(defs.num_likes))[::-1], color='mediumslateblue', label='number of upvotes')
+    plt.plot(sorted(list(defs.num_dislikes))[::-1], color='darkorange', label='number of downvotes')
     plt.legend()
     plt.title("number of upvotes and downvotes in the dataset, in log scale")
     plt.yscale('log')
@@ -53,7 +53,7 @@ def plot_like_dislike_ratio(defs):
     defs["like_dislike_ratio"] = defs["num_likes"] / (defs["num_dislikes"] + EPSILON)
     ratios = sorted(defs["like_dislike_ratio"])
     ratios = [a for a in ratios if a < 1 / EPSILON]
-    plt.plot(ratios[::-1], color='dodgerblue', label='upvotes/downvotes')
+    plt.plot(ratios[::-1], color='mediumslateblue', label='upvotes/downvotes')
     plt.legend()
     plt.title("upvote/downvote ratio in the dataset")
     plt.yscale('log')
@@ -215,4 +215,5 @@ def plot_old_vs_new(old_reps, new_reps, word):
     plt.legend()
     plt.title("word representations of " + word + " in 2d with PCA")
     plt.show()
+
 

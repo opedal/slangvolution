@@ -43,6 +43,7 @@ def merge_freq_dfs(freq2010, freq2020, NORMALIZING_CONSTANT=6.4):
                                  (all_freqs.freq2020_norm + all_freqs.freq2010)
 
     all_freqs["log_diff"] = np.log(all_freqs.freq2020_norm/all_freqs.freq2010)
+    all_freqs["abs_log_diff"] = all_freqs["log_diff"].apply(lambda x: abs(x))
 
     return all_freqs
 
@@ -84,7 +85,7 @@ def plot_3cat_comparison(s_all, ns_all,h_all):
     curr_col = "log_diff"
     plt.hist([ns_all[curr_col], s_all[curr_col], h_all[curr_col]],
              label=["nonslang", "slang", "hybrid"],
-             #"xkcd:robin's egg"
+             #for a lighter hybrid color : "xkcd:robin's egg"
              color=["mediumslateblue", "darkorange", "xkcd:bright sky blue"],
              bins=22)
     plt.legend()

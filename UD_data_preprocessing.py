@@ -81,7 +81,7 @@ if __name__ == '__main__':
     parser.add_argument("--min-ratio", type=int, default=2)
     parser.add_argument("--sample", type=int, default=100000)
     args = parser.parse_args()
-
-    defs = defs_to_pandas(args.path)
+    fpath = "/Users/alacrity/Documents/GitHub/slangvolution/data/all_definitions.dat"
+    defs = defs_to_pandas(fpath)
 
     filter_sample_and_write(defs, args.min_likes, args.min_ratio, name=args.name, sample_size=args.sample)
