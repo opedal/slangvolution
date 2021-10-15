@@ -109,19 +109,6 @@ def approx_freq(word, year=2010, num_dates=20, hour_gap=6):
     avg_count = total_count/T
     return avg_count
 
-def check_example_words():
-    #time.sleep(15*60)
-    # for word in ["fam", "noob"]:
-    #     # ["lowkey", "noob","chillax","bling", "bromance", ]
-    #     for year in [2010,2020]:
-    #         freq = approx_word_freq(word,
-    #                                 year=year,
-    #                                 num_dates=args.num_dates,
-    #                                 hour_gap=2,
-    #                                 )
-    #         print("freq for",word, "in",year,"is", freq)
-    return
-
 if __name__ == '__main__':
     #words_of_interest = ["bromance", "bling","fam", "lowkey","unicorn", "they","performative","haircut","inclusive"]
     #["haircut", "inclusive", "bling", "chillax"]

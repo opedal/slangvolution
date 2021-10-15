@@ -69,9 +69,9 @@ def plot_PCA_tradeoff(target, pca_model, corpus1_reps, corpus2_reps):
     x = np.arange(1, y.shape[0]+1)
     plt.plot(x, y)
     plt.title(target)
-    plt.axvline(x=np.where(y >= 0.7)[0][0], color = "springgreen")
-    plt.axvline(x=np.where(y >= 0.8)[0][0], color = "lightcoral")
-    plt.axvline(x=np.where(y >= 0.9)[0][0], color = "gold")
+    plt.axvline(x=np.where(y >= 0.7)[0][0], color="springgreen")
+    plt.axvline(x=np.where(y >= 0.8)[0][0], color="lightcoral")
+    plt.axvline(x=np.where(y >= 0.9)[0][0], color="gold")
     plt.show()
 
 def plot_one_2d_rep(X_old, X_new, word, dim_reduction_method="pca"):
@@ -216,4 +216,12 @@ def plot_old_vs_new(old_reps, new_reps, word):
     plt.title("word representations of " + word + " in 2d with PCA")
     plt.show()
 
-
+def plot_log_freqs_change(slang_freq_df, nonslang_freq_df):
+    plt.hist([[np.log(k) for k in slang_freq_df.freq.values],
+              [np.log(k) for k in nonslang_freq_df.freq.values]],
+             color=["darkorange","mediumslateblue"],
+             label=["slang","nonslang"])
+    plt.xlabel("log of # occurrences in 24 hours")
+    plt.legend()
+    plt.title("log-frequency of words in 2010")
+    plt.show()

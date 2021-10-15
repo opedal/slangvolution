@@ -47,27 +47,23 @@ def merge_freq_dfs(freq2010, freq2020, NORMALIZING_CONSTANT=6.4):
 
     return all_freqs
 
-def freq_difference():
+def get_freq_difference_stats(save=True):
     slang2010 = pd.read_csv(file_names["slang 2010"])
     slang2020 = pd.read_csv(file_names["slang 2020"])
-    s_all = merge_freq_dfs(slang2010, slang2020)
-    s_all.to_csv("data/frequencies/slang_all_freqs.csv")
+    slang_all = merge_freq_dfs(slang2010, slang2020)
+    if save: slang_all.to_csv("data/frequencies/slang_all_freqs.csv")
 
-    ns2010 = pd.read_csv(file_names["nonslang 2010"])
-    ns2020 = pd.read_csv(file_names["nonslang 2020"])
-    ns_all = merge_freq_dfs(ns2010, ns2020)
-    ns_all.to_csv("data/frequencies/nonslang_all_freqs.csv")
+    nonslang2010 = pd.read_csv(file_names["nonslang 2010"])
+    nonslang2020 = pd.read_csv(file_names["nonslang 2020"])
+    nonslang_all = merge_freq_dfs(nonslang2010, nonslang2020)
+    if save: nonslang_all.to_csv("data/frequencies/nonslang_all_freqs.csv")
 
-    h2010 = pd.read_csv(file_names["hybrid 2010"])
-    h2020 = pd.read_csv(file_names["hybrid 2020"])
-    h_all = merge_freq_dfs(h2010, h2020)
-    h_all.to_csv("data/frequencies/hybrid_all_freqs.csv")
+    hybrid2010 = pd.read_csv(file_names["hybrid 2010"])
+    hybrid2020 = pd.read_csv(file_names["hybrid 2020"])
+    hybrid_all = merge_freq_dfs(hybrid2010, hybrid2020)
+    if save: hybrid_all.to_csv("data/frequencies/hybrid_all_freqs.csv")
 
-    sample2010 = pd.read_csv(file_names["sample 2010"])
-    sample2020 = pd.read_csv(file_names["sample 2020"])
-    sample_all = merge_freq_dfs(sample2010, sample2020)
-
-    plt.hist([ns_all["div_freq_larger_norm"][ns_all["div_freq_larger_norm"] < 200], s_all["div_freq_larger_norm"][s_all["div_freq_larger_norm"] < 200]], label = ["nonslang", "slang"], bins=22)
+    return slang_all, nonslang_all, hybrid_all
 
 def plot_slang_nonslang_comparison(s_all, ns_all, curr_col="abs_diff2_norm",
                                    title="absolute subtracted difference",
@@ -81,7 +77,7 @@ def plot_slang_nonslang_comparison(s_all, ns_all, curr_col="abs_diff2_norm",
     plt.title("Frequency change between 2010 and 2020")
     plt.show()
 
-def plot_3cat_comparison(s_all, ns_all,h_all):
+def plot_3category_comparison(s_all, ns_all,h_all):
     curr_col = "log_diff"
     plt.hist([ns_all[curr_col], s_all[curr_col], h_all[curr_col]],
              label=["nonslang", "slang", "hybrid"],
@@ -115,7 +111,7 @@ def print_averages_and_medians(s_all, ns_all, curr_col):
                                                         "%.2f" % np.median(ns_all[curr_col]),
                                                                         ))
 
-def average_frequency():
+def print_average_frequencies():
     avgs = {}
     for (k,fn) in file_names.items():
         df = pd.read_csv(fn)
@@ -130,6 +126,6 @@ def average_frequency():
           avgs["sample 2020"]/avgs["sample 2010"])
 
 
-average_frequency()
-freq_difference()
+print_average_frequencies()
+get_freq_difference_stats()
 
