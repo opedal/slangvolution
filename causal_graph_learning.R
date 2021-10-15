@@ -7,15 +7,13 @@ library(ggpubr)
 
 #install.packages("Rfast2", type="binary")
 
-#TODO: log transform for frequencies
-
 data <- read.csv("word-lists/causal_data_input.csv")
 head(data)
 
 # make factor variable binary
 data$type <- as.factor(data$type)
 #data$polysemy <- as.double(data$polysemy)
-data$polysemy[data$polysemy >= 10] <- 10
+#data$polysemy[data$polysemy >= 10] <- 10
 #data$polysemy <- factor(data$polysemy, ordered = TRUE)
 
 data$logfreqchange <- log(data$freq2020/data$freq2010)
@@ -24,10 +22,21 @@ data$freq2020log <- log(data$freq2020)
 data$meanfreq <- (data$freq2010+data$freq2020)/2
 data$meanfreqlog <- log(data$meanfreq)
 
+
+t1<- 2
+t2 <- 15
 data$polysemy.cat <- 0
 data$polysemy.cat[data$polysemy == 1] <- "one"
-data$polysemy.cat[(data$polysemy <= 3) & (data$polysemy > 1)] <- "few"
-data$polysemy.cat[data$polysemy > 3] <- "many"
+data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
+data$polysemy.cat[(data$polysemy <= t2) & (data$polysemy > t1)] <- "more"
+data$polysemy.cat[data$polysemy > t2] <- "many"
+data$polysemy.cat <- as.factor(data$polysemy.cat)
+
+t1 <- 5
+data$polysemy.cat <- 0
+data$polysemy.cat[data$polysemy == 1] <- "one"
+data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
+data$polysemy.cat[data$polysemy > t1] <- "many"
 data$polysemy.cat <- as.factor(data$polysemy.cat)
 
 ## Perform gaussian test
@@ -36,6 +45,7 @@ ggdensity(data$meanfreq, main="Mean frequency") # not normal
 ggdensity(data$logfreqchange, main="Log frequency change")
 ggdensity(data$semantic_change, main="Semantic change score")
 ggdensity(data$polysemy, main="Polysemy") # not normal
+ggdensity(log(data$polysemy), main="Log Polysemy")
 
 ggqqplot(data$meanfreqlog)
 ggqqplot(data$meanfreq) # not normal
@@ -58,7 +68,7 @@ data %>%
          polysemy, type) -> data.relativelog
 
 data %>%
-  select(freq2010log, freq2020log, meanfreqlog, logfreqchange, semantic_change, 
+  select(meanfreqlog, logfreqchange, semantic_change, 
          polysemy.cat, type) -> data.relativelog.cat
   
 data.matrix <- as.matrix(data.relativelog)
@@ -72,31 +82,46 @@ testIndOrdinal(factor(data.matrix[,6], ordered=TRUE),
 #MXM::cond.regs(target=data$freq2010, dataset=as.data.frame(data[,2:4]), 
 #                  xIndex=1, csIndex=0, test=testIndReg)
 
-ci.test(x="polysemy", y="meanfreqlog", data = data.relativelog, test = "jt")
+ci.test(x="polysemy.cat", y="semantic_change",
+        data = data.relativelog.cat, test="mi-cg")
+ci.test(x="meanfreqlog", y="semantic_change", z = c("polysemy.cat","type"),
+        data = data.relativelog.cat, test="mi-cg")
+
+# correlation between continuous polysemy and log freq
+ci.test(x="polysemy", y="meanfreqlog",
+        data = data.relativelog, test="cor")
+ci.test(x="polysemy", y="meanfreq",
+        data = data.relative2, test="cor")
+
+
+ci.test(x="polysemy", y="meanfreqlog", data = data.relativelog, test="mc-mi-g")
 #mi, mi-adf, mc-mi, smc-mi, sp-mi, mi-sh, x2, x2-adf, mc-x2, smc-x2, sp-x2
 #jt, mc-jt, smc-jt
 #cor, mc-cor, smc-cor, zf, mc-zf, smc-zf, mi-g, mc-mi-g, smc-mi-g, mi-g-sh
 #mi-cg
 
-res <- pc.stable(data.relativelog.cat, alpha = 0.5)
+res <- pc.stable(data.relativelog.cat, alpha = 0.05)
+plot(res)
+
+res <- pc.stable(data.relativelog.cat, alpha = 0.01)
 plot(res)
 
 res <- pc.stable(data.relativelog, test="jt,mi")
 plot(res)
 
-res <- gs(data.relativelog)
+res <- gs(data.relativelog.cat)
 plot(res)
 
-res <- fast.iamb(data.relativelog)
+res <- fast.iamb(data.relativelog.cat)
 plot(res)
 
-res <- mmpc(data.relativelog)
+res <- mmpc(data.relativelog.cat)
 plot(res)
 
-res <- si.hiton.pc(data.relativelog)
+res <- si.hiton.pc(data.relativelog.cat)
 plot(res)
 
-res <- hpc(data.relative)
+res <- hpc(data.relativelog.cat)
 plot(res)
 
 res <- hc(data.relative2)
