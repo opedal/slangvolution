@@ -5,26 +5,31 @@ from mlxtend.evaluate import permutation_test
 ## inner imports
 from semantic_change_scores import get_data_for_tweets, get_APD_scores, MIN_TWEETS
 
-old_slang_reps, new_slang_reps = get_data_for_tweets(type='slang')
-old_nonslang_reps, new_nonslang_reps = get_data_for_tweets(type='nonslang')
+#old_slang_reps, new_slang_reps = get_data_for_tweets(type='slang')
+#old_nonslang_reps, new_nonslang_reps = get_data_for_tweets(type='nonslang')
+old_hybrid_reps, new_hybrid_reps = get_data_for_tweets(type='hybrid')
 
-words_path = "word-lists/all_words_300.csv"
+words_path = "word-lists/all_words_300_change_scores.csv"
 all_words_df = pd.read_csv(words_path)
 slang_word_list = list(all_words_df[all_words_df.type == "slang"].word)
 nonslang_word_list = list(all_words_df[all_words_df.type == "nonslang"].word)
+hybrid_word_list = list(all_words_df[all_words_df.type == "both"].word)
 
-res = get_APD_scores(old_slang_reps, new_slang_reps, slang_word_list, min_tweets=MIN_TWEETS)
-res_slang = pd.DataFrame(res)
+res = get_APD_scores(old_hybrid_reps, new_hybrid_reps, hybrid_word_list, min_tweets=MIN_TWEETS)
+res_hybrid = pd.DataFrame(res)
 
-res = get_APD_scores(old_nonslang_reps, new_nonslang_reps, nonslang_word_list, min_tweets=MIN_TWEETS)
-res_nonslang = pd.DataFrame(res)
+#res = get_APD_scores(old_nonslang_reps, new_nonslang_reps, nonslang_word_list, min_tweets=MIN_TWEETS)
+#res_nonslang = pd.DataFrame(res)
 
-res_all = pd.concat([res_slang, res_nonslang])
-all_words_df = all_words_df.merge(res_all, left_on="word", right_on="word", how="left")
+#res = get_APD_scores(old_slang_reps, new_slang_reps, slang_word_list, min_tweets=MIN_TWEETS)
+#res_slang = pd.DataFrame(res)
+
+#res_all = pd.concat([res_slang, res_nonslang])
+all_words_df = all_words_df.merge(res_hybrid, on=["word",], how="left")
 all_words_df.to_csv("word-lists/all_words_300_change_scores2.csv", index=False)
 
-slang_APD = res_slang.combined_APD
-nonslang_APD = res_nonslang.combined_APD
+#slang_APD = res_slang.combined_APD
+#nonslang_APD = res_nonslang.combined_APD
 
 #all_words_df = pd.read_csv("word-lists/all_words_300_change_scores.csv")
 #slang_APD = list(all_words_df[all_words_df.type == "slang"].combined_APD)
