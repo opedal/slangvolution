@@ -1,3 +1,6 @@
+"""
+Turn tweets into word representations
+"""
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
@@ -239,7 +242,7 @@ if __name__ == '__main__':
 
         if args.type in ["slang","nonslang","both"]:
 
-            words_path = "word-lists/all_words_300.csv"
+            words_path = "data/word-lists/all_words_300.csv"
             selected_words_df = pd.read_csv(words_path)
             words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 

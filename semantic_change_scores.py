@@ -3,11 +3,9 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 import regex as re
-import os
 # Sklearn
 from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
-from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn import metrics
@@ -19,35 +17,12 @@ from scipy.spatial.distance import jensenshannon, canberra
 from visualizations import plot_2d_representations, plot_one_2d_rep, draw_cluster_score_plots
 #from dbscan import *
 from tqdm import tqdm
-from utils import apply_PCA
+from utils import apply_PCA, apply_UMAP
+import config
 
 THRESHOLD = 0.1
-MIN_TWEETS = 150
-
-REPR_PATHS = {'slang': {"old": "old_slang_reps.pickle",
-                        "new": "new_slang_reps.pickle"
-                        },
-              'nonslang': {
-                  "old": "old_nonslang_reps.pickle",
-                  "new": "new_nonslang_reps.pickle"
-                        },
-              'hybrid': {
-                  "old": "old_hybrid_reps.pickle",
-                  "new": "new_hybrid_reps.pickle"
-              }
-              }
-
-TWEET_PATHS = {'slang': {"old": "old_slang_tweets.pickle",
-                         "new": "new_slang_tweets.pickle"
-                         },
-               'nonslang': {
-                   "old": "old_nonslang_tweets.pickle",
-                   "new": "new_nonslang_tweets.pickle"
-               }
-               }
 
 class ClusterEvaluater:
-
     def __init__(self):
         self.metrics = ['silhouette']
 
@@ -78,7 +53,7 @@ def permutation_test(slang_APD, nonslang_APD):
                                    np.average(pooled_distribution[int(len(pooled_distribution) / 2):])))
 
     p_val = len(np.where(random_diffs >= true_diff)[0]) / permutation_num
-
+    return p_val
 
 def get_labels(data, Ks = [2,3,4,5]):
     best_score = 0.1
@@ -330,11 +305,6 @@ def get_clusters_by_score(data, model = "kmeans", k_min=2, k_max=10, seeds=range
         best_cluster_labels = clusterer.fit_predict(data)
     return best_cluster_labels, best_K
 
-def load_corpus_reps(path):
-    with open(path, 'rb') as handle:
-        corpus_reps = pickle.load(handle)
-    return corpus_reps
-
 def get_cluster_semantic_change_scores(old_reps, new_reps, targets, method="pca", normalize=False):
     results = []
     for target in tqdm(targets):
@@ -504,18 +474,23 @@ def inner_APD_scores(corpus_reps, targets, dim=100, MIN_TWEETS=50):
                                                                           dist="combined2"))
     return scores
 
+def load_corpus_reps(path):
+    with open(path, 'rb') as handle:
+        corpus_reps = pickle.load(handle)
+    return corpus_reps
+
 def get_data_for_tweets(type='slang', path="data/"):
 
-    old_reps_name = REPR_PATHS[type]['old']
+    old_reps_name = config.REPR_PATHS[type]['old']
     old_reps = load_corpus_reps(path + old_reps_name)
 
-    new_reps_name = REPR_PATHS[type]['new']
+    new_reps_name = config.REPR_PATHS[type]['new']
     new_reps = load_corpus_reps(path + new_reps_name)
 
     return old_reps, new_reps
 
-def get_data_for_semeval(path="/Users/alacrity/Documents/uni/CSNLP/project/semeval2020_ulscd_eng/targets.txt"):
-    with open(path) as f:
+def get_data_for_semeval():
+    with open(config.SEMEVAL_PATH) as f:
         target_words = f.read().strip()
     target_words = [word for word in re.split("\n", target_words)]
 
@@ -527,12 +502,10 @@ def get_data_for_semeval(path="/Users/alacrity/Documents/uni/CSNLP/project/semev
 
     return target_words, corpus1_reps, corpus2_reps
 
+
 def get_true_semeval():
     from scipy.stats import spearmanr
-
-    true_semeval_path = "/Users/alacrity/Documents/uni/CSNLP/project/semeval2020_ulscd_eng/truth/graded.txt"
-    #data/semeval2020_ulscd_eng/truth/graded.txt"
-    true_scores = open(true_semeval_path).read().strip()
+    true_scores = open(config.SEMEVAL_PATH).read().strip()
     true_scores = {re.split("\t", target)[0]: float(re.split("\t", target)[1]) for target in
                    re.split("\n", true_scores)}
     truth = list(true_scores.values())
@@ -561,7 +534,7 @@ if __name__ == '__main__':
     # res_new_df = pd.DataFrame(res_new)
     # res_new_df.to_csv("semeval_APD_only2020.csv")
 
-    res = get_APD_scores(old_reps, new_reps, target_words, min_tweets=MIN_TWEETS)
+    res = get_APD_scores(old_reps, new_reps, target_words, min_tweets=config.MIN_TWEETS_PER_WORD)
     res_between_df = pd.DataFrame(res)
     res_between_df.to_csv("slang_APD.csv")
 

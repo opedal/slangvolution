@@ -1,4 +1,0 @@
-search_tweets_api:
-  account_type: premium
-  endpoint: https://api.twitter.com/2/tweets/search/all
-  bearer_token: AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAvM92PZSwVJ%2Ba%2BOD5Pgi4N298uTI%3DBBY7UCntIx9eXHBqGRjgjQcjoDFlMgFGJCjzd65uKISX8VFpwc

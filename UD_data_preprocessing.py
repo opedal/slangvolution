@@ -1,7 +1,15 @@
+"""
+Script for filtering the UD data to get 100000 definitions out of the original 3534966
+Filtering according to
+- upvote/downvote ratio
+- number of upovotes
+And finally taking a random sample
+"""
 import pandas as pd
 import time
 import argparse
 import os
+SEED=101
 
 def defs_to_pandas(fpath):
     with open(fpath) as f:
@@ -72,16 +80,14 @@ def filter_sample_and_write(df, min_likes, min_ratio, name, sample_size=10000):
         os.mkdir("data")
     newdf.to_csv(f"data/{name}.csv")
 
-SEED=101
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, default="data/all_definitions.dat")
-    parser.add_argument("--name", type=str, default="filtered_100000_sampled")
+    parser.add_argument("--name", type=str, default="UD_filtered_100000_sampled")
     parser.add_argument("--min-likes", type=int, default=20)
     parser.add_argument("--min-ratio", type=int, default=2)
     parser.add_argument("--sample", type=int, default=100000)
     args = parser.parse_args()
-    fpath = "/Users/alacrity/Documents/GitHub/slangvolution/data/all_definitions.dat"
+    fpath = "data/all_definitions.dat"
     defs = defs_to_pandas(fpath)
-
     filter_sample_and_write(defs, args.min_likes, args.min_ratio, name=args.name, sample_size=args.sample)

@@ -113,7 +113,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num-epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=1)
-    parser.add_argument("--data-path", type=str, default='data/filtered_100000_sampled.csv')
+    parser.add_argument("--data-path", type=str, default='data/UD_filtered_100000_sampled.csv')
     parser.add_argument("--small",type=bool, default=False)
     parser.add_argument("--maskp",type=float, default=0.15)
     parser.add_argument("--patience",type=int, default=3)

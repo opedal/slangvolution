@@ -1,120 +1,8 @@
-import requests
-import os
-import datetime
-import random
-import pandas as pd
-import numpy as np
-import time
-import argparse
-import sys
-from nltk.corpus import words
-word_list = words.words()
-num_words = 100
-sample_words = np.random.choice(word_list, num_words)
-
-def random_sample_date(start_date,day_gap=365):
-    td = random.random() * datetime.timedelta(days=day_gap)
-    dt = start_date + td
-    return dt
-
-def get_random_dates(start_date, num_dates=50, hour_gap=24):
-    date_spans = []
-    for i in range(num_dates):
-        date = random_sample_date(start_date=start_date)
-        date_spans.append((date, date+ datetime.timedelta(hours=hour_gap)))
-    return date_spans
-
-def format_two_digits(num_str):
-    if len(num_str) == 1:
-        return '0'+num_str
-    return num_str
-
-def datetime2apidate(dt):
-    year = str(dt.year)
-    month = format_two_digits(str(dt.month))
-    day = format_two_digits(str(dt.day))
-    hour = format_two_digits(str(dt.hour))
-    minute = format_two_digits(str(dt.minute))
-    seconds = "00.000Z"
-    date_day = "-".join([year,month,day])
-    time_in_day = ":".join([hour,minute,seconds])
-    return date_day + "T" + time_in_day
-
-def auth():
-    return BEARER_TOKEN
-
-def create_count_url(word,start_time,end_time, bucket="hour"):
-    start_time = "start_time="+start_time #2021-01-17T00:00:00Z"
-    end_time = "end_time="+end_time #2021-01-18T00:00:00Z"
-    #max_results_str = "max_results="+str(max_results)
-    query = word#"TwitterDev%20%5C%22search%20api%5C%22"
-    granularity=""
-    bucket = "bucket="+str(bucket)
-    url = "https://api.twitter.com/2/tweets/counts/all?query={}&{}&{}".format(
-        query, start_time, end_time
-    )
-    return url
-
-def create_headers(bearer_token):
-    headers = {"Authorization": "Bearer {}".format(bearer_token)}
-    return headers
-
-def connect_to_endpoint(url, headers):
-    response = requests.request("GET", url, headers=headers)
-    print("response status:", response.status_code)
-    if response.status_code != 200:
-        raise Exception(response.status_code, response.text)
-    return response.json(), (response.status_code == 200)
-
-def get_year(utc_str):
-    return utc_str[:4]
-
-def get_month(utc_str):
-    return utc_str[5:7]
-
-def get_day(utc_str):
-    return utc_str[8:10]
-
-def approx_freq(word, year=2010, num_dates=20, hour_gap=6):
-    FIRST_DATE = datetime.datetime(year,1,1)
-    bearer_token = auth()
-    headers = create_headers(bearer_token)
-    date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates, hour_gap=hour_gap)
-    T, total_count = 0,0
-    for dt_spn in date_spans:
-        print("getting tweets for ", dt_spn[0])
-        try:
-            start_date = datetime2apidate(dt_spn[0])
-            end_date = datetime2apidate(dt_spn[1])
-            url = create_count_url(word, start_time=start_date, end_time=end_date)
-            json_response, is_successful = connect_to_endpoint(url, headers)
-            count = json_response["meta"]['total_tweet_count']
-            if is_successful:
-                T += 1
-                total_count += count
-        except:
-            continue
-    if T <= 0: return -1
-    avg_count = total_count/T
-    return avg_count
+from tweet_retrieval import *
 
 if __name__ == '__main__':
-    #words_of_interest = ["bromance", "bling","fam", "lowkey","unicorn", "they","performative","haircut","inclusive"]
-    #["haircut", "inclusive", "bling", "chillax"]
-    #["fam", "lowkey","unicorn", "they","performative","haircut", "inclusive", "bling", "chillax"]
     REQUEST_LIMIT = 300
-    words_path = "word-lists/all_words_300.csv"
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--type", type=str, default="both") #{"slang","nonslang","both","sample"}
-    parser.add_argument("--year", type=int, default=2010)
-    parser.add_argument("--save-dir", type=str, default="data/frequencies/")
-    parser.add_argument("--iter", type=int, default=5)
-    parser.add_argument("--hour-gap",type=int,default=48)
-    parser.add_argument("--num-dates",type=int,default=40)
-    args = parser.parse_args()
-
-    selected_words_df = pd.read_csv(words_path)
-    words_list = list(selected_words_df[selected_words_df.type == args.type].word)
+    words_path = "data/word-lists/all_words_300.csv"
     PATHS = {"slang2010":"freq_slang_counts_24h_2010.csv",
              "slang2020": "freq_slang_counts_24h_2020.csv",
              "nonslang2010":"freq_nonslang_counts_24h_2010.csv",
@@ -124,16 +12,23 @@ if __name__ == '__main__':
              "sample2010": "freq_sample_words_24h_2010.csv",
              "sample2020": "freq_sample_words_24h_2020.csv",
              }
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both","sample"}
+    parser.add_argument("--year", type=int, default=2010)
+    parser.add_argument("--save-dir", type=str, default="data/frequencies/")
+    parser.add_argument("--iter", type=int, default=5)
+    parser.add_argument("--hour-gap",type=int,default=48)
+    parser.add_argument("--num-dates",type=int,default=40)
+    args = parser.parse_args()
 
-    #sample_words_df = pd.read_csv("sample_words.csv")
-    #words_list = sample_words_df["sample"].values
+    selected_words_df = pd.read_csv(words_path)
+    words_list = list(selected_words_df[selected_words_df.type == args.type].word)
+
     freq_file_path = os.path.join(args.save_dir, PATHS[args.type + str(args.year)])
-    #freq_file_path = "data/frequencies/words_of_interest_freqs2020.csv"
     print("saving word frequencies under", freq_file_path)
     num_words_until_pause = np.ceil(REQUEST_LIMIT/args.num_dates)
     hour_gap=24
-    i = 0
-    #time.sleep(15*60)
+    num_words_since_pause = 0
     for word in words_list:
         word = word.lower()
         freq_df = pd.read_csv(freq_file_path)
@@ -148,15 +43,11 @@ if __name__ == '__main__':
         with open(freq_file_path, "a") as freq_file:
                 row = (",").join([str("%.2f" % freq), word, str(args.year), args.type])
                 freq_file.write("\n" + row)
-        i += 1
+        num_words_since_pause += 1
         print("saved tweets for", word)
-        ## Update slang word dataframe so that we don't sample tweets from this word again
-        #idx = np.where(selected_words_df.word == word)
-        #selected_words_df.loc[idx[0][0], 'is_saved'] = True
-        #selected_words_df.to_csv(words_path)
         ## Wait 15 minutes to avoid request rate restrictions
-        if i == num_words_until_pause:
-            i = 0
+        if num_words_since_pause == num_words_until_pause:
+            num_words_since_pause = 0
             print("will wait 15 minutes now")
             time.sleep(15*60)
             print("finished waiting")

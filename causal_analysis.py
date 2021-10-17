@@ -22,7 +22,7 @@ if __name__ == '__main__':
                        "nonslang": "data/frequencies/freq_nonslang_counts_24h_2010.csv"
                        }
 
-    causal_df = pd.read_csv("word-lists/causal_data_input.csv")
+    causal_df = pd.read_csv("data/word-lists/causal_data_input.csv")
 
     hybrid_polysemy_df = pd.read_csv(polysemy_file_paths["hybrid"])
     hybrid_polysemy_df["polysemy"] = hybrid_polysemy_df["num_s"] +  hybrid_polysemy_df["num_ns"]

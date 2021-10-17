@@ -69,15 +69,6 @@ def get_clusters_by_silhouette(data, model = "kmeans", k_min=2, k_max=10, seeds=
         cluster_labels = clusterer.fit_predict(data)
         return cluster_labels, best_K, best_silhouette
 
-def apply_PCA(data, dim=50):
-    pca_model = PCA(n_components=dim)
-    return pca_model.fit_transform(data)
-
-def apply_UMAP(data, dim = 50, n_neighbors=15, min_dist = 0.1):
-    import umap.umap_ as umap
-    umap_model = umap.UMAP(n_components=dim, n_neighbors=n_neighbors, min_dist=min_dist)
-    return umap_model.fit_transform(data)
-
 def fit_categoricals_from_clusters(cluster_assignments, period1_length, period2_length):
     labels = set(cluster_assignments)
 
@@ -379,7 +370,6 @@ def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets):
 
         results.append(scores)
     return results
-
 
 def get_data_for_semeval(reps="sum"):
     with open("data/semeval2020_ulscd_eng/targets.txt") as f:
