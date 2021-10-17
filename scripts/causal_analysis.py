@@ -1,18 +1,17 @@
 import pandas as pd
-from visualizations import plot_log_freqs, plot_polysemy
 from utils import independence_tests
+from visualizations import plot_log_freqs, plot_polysemy
 
 if __name__ == '__main__':
-
-    polysemy_file_paths = {"slang": "data/polysemy/polysemy_slang.csv",
-                           "nonslang": "data/polysemy/polysemy_nonslang.csv",
-                           "hybrid": "data/polysemy/polysemy_hybrid.csv",
+    polysemy_file_paths = {"slang": "../data/polysemy/polysemy_slang.csv",
+                           "nonslang": "../data/polysemy/polysemy_nonslang.csv",
+                           "hybrid": "../data/polysemy/polysemy_hybrid.csv",
                            }
 
-    freq_file_paths = {"slang 2010": "data/frequencies/freq_slang_counts_24h_2010.csv",
-                       "slang 2020": "data/frequencies/freq_slang_counts_24h_2020.csv",
-                       "nonslang 2010": "data/frequencies/freq_nonslang_counts_24h_2010.csv",
-                       "nonslang 2020": "data/frequencies/freq_nonslang_counts_24h_2020.csv",
+    freq_file_paths = {"slang 2010": "../data/frequencies/freq_slang_counts_24h_2010.csv",
+                       "slang 2020": "../data/frequencies/freq_slang_counts_24h_2020.csv",
+                       "nonslang 2010": "../data/frequencies/freq_nonslang_counts_24h_2010.csv",
+                       "nonslang 2020": "../data/frequencies/freq_nonslang_counts_24h_2020.csv",
                        }
 
     causal_df = pd.read_csv("../data/causal_data_input.csv")

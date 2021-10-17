@@ -162,6 +162,9 @@ def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets):
     return results
 
 def get_APD_scores(corpus1_reps, corpus2_reps, targets, dim=100, min_tweets=150):
+    """
+    Compute APD between two corpora
+    """
     scores = {
         "word" : [],
         "Euclidian_APD" : [],
@@ -192,6 +195,9 @@ def get_APD_scores(corpus1_reps, corpus2_reps, targets, dim=100, min_tweets=150)
     return scores
 
 def inner_APD_scores(corpus_reps, targets, dim=100, MIN_TWEETS=50):
+    """
+    Compute APD within the same corpus
+    """
     scores = {
         "word" : [],
         "Euclidian_APD" : [],
@@ -461,10 +467,10 @@ def load_corpus_reps(path):
 
 def get_data_for_tweets(type='slang', path="data/"):
 
-    old_reps_name = config.REPR_PATHS[type]['old']
+    old_reps_name = config.REPR_FILE_NAMES[type]['old']
     old_reps = load_corpus_reps(path + old_reps_name)
 
-    new_reps_name = config.REPR_PATHS[type]['new']
+    new_reps_name = config.REPR_FILE_NAMES[type]['new']
     new_reps = load_corpus_reps(path + new_reps_name)
 
     return old_reps, new_reps
