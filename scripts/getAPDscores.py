@@ -8,9 +8,9 @@ from semantic_change import get_data_for_tweets, get_APD_scores
 from config import MIN_TWEETS_PER_WORD, SLANG_COLOR, NONSLANG_COLOR
 
 ### Get Representations
-old_slang_reps, new_slang_reps = get_data_for_tweets(type='slang')
-old_nonslang_reps, new_nonslang_reps = get_data_for_tweets(type='nonslang')
-old_hybrid_reps, new_hybrid_reps = get_data_for_tweets(type='hybrid')
+old_slang_reps, new_slang_reps = get_data_for_tweets(type='slang', path="..data/")
+old_nonslang_reps, new_nonslang_reps = get_data_for_tweets(type='nonslang', path="..data/")
+old_hybrid_reps, new_hybrid_reps = get_data_for_tweets(type='hybrid', path="..data/")
 
 words_path = "../data/word-lists/all_words_300_change_scores.csv"
 all_words_df = pd.read_csv(words_path)

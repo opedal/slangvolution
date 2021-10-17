@@ -1,3 +1,6 @@
+"""
+Calculating statistics for change in frequency
+"""
 import pandas as pd
 import numpy as np
 import os.path as osp
