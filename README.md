@@ -11,7 +11,7 @@ To retrieve tweets run:
 
 To approximate word frequency run: 
 
-`get_word_frequenciess.py --type slang --year 2020 --num-dates 40`
+`get_word_frequencies.py --type slang --year 2020 --num-dates 40`
 
 What each parameter means: 
 - type: string corresponding to word type, can be slang, nonslang, or both
