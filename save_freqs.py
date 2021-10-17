@@ -1,3 +1,7 @@
+"""
+Save approximate word frequencies
+- A word's frequency is approximated by the average number of times it is tweeted per day
+"""
 from tweet_retrieval import *
 
 if __name__ == '__main__':

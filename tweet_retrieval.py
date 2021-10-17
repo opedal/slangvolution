@@ -171,7 +171,7 @@ def get_word_tweets_df(word='yeet',
     tweets_df.to_csv(df_path)
     return True
 
-def approx_freq(word, year=2010, num_dates=20, hour_gap=6):
+def approx_freq(word, year=2010, num_dates=40, hour_gap=6):
     FIRST_DATE = datetime.datetime(year,1,1)
     bearer_token = auth()
     headers = create_headers(bearer_token)

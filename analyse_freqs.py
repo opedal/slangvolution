@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-from causal_analysis import independence_tests
+from utils import independence_tests
+from visualizations import plot_3category_comparison, plot_slang_nonslang_comparison
 
 file_names = {"slang 2020": 'data/frequencies/freq_slang_counts_24h_2020.csv',
               "slang 2010": 'data/frequencies/freq_slang_counts_24h_2010.csv',
@@ -21,23 +22,22 @@ def divide_by_larger_freq(X, colname1="freq2020", colname2="freq2010"):
         return y/x
 
 def merge_freq_dfs(freq2010, freq2020, NORMALIZING_CONSTANT=6.4):
+    """
+    Merge the frequency dataframes of 2010 & 2020, and compute various change statistics
+    """
     freq2010.columns = ['freq2010', 'word', 'year', 'type']
     freq2020.columns = ['freq2020', 'word', 'year', 'type']
     all_freqs = pd.merge(freq2010, freq2020[['freq2020', 'word']], on="word", how="inner")
     all_freqs["freq2020_norm"] = all_freqs.freq2020.apply(lambda x: x / NORMALIZING_CONSTANT)
-    all_freqs["freq_diff"] = all_freqs.freq2020 / (all_freqs.freq2010)
-    all_freqs["freq_diff_norm"] = all_freqs.freq2020_norm / (all_freqs.freq2010)
 
-    all_freqs["div_freq_larger"] = all_freqs[["freq2020", "freq2010"]].apply(divide_by_larger_freq, axis=1)
-    all_freqs["div_freq_larger_norm"] = all_freqs[["freq2020_norm", "freq2010"]].apply(
+    all_freqs["freq_diff_unnormalized"] = all_freqs.freq2020 / (all_freqs.freq2010)
+    all_freqs["freq_diff"] = all_freqs.freq2020_norm / (all_freqs.freq2010)
+
+    all_freqs["div_freq_larger"] = all_freqs[["freq2020_norm", "freq2010"]].apply(
                                       lambda x: divide_by_larger_freq(x, colname1="freq2020_norm"), axis=1)
-    #all_freqs["abs_diff"] = np.abs(all_freqs.freq2020 - all_freqs.freq2010)
-    #all_freqs["abs_diff_norm"] = all_freqs["abs_diff"] / (all_freqs.freq2010)
 
-    all_freqs["abs_diff"] = np.abs(all_freqs.freq2020_norm - all_freqs.freq2010)
-    all_freqs["abs_diff_norm"] = all_freqs["abs_diff"] / (all_freqs.freq2010)
-
-    all_freqs["abs_diff_norm2020"] = all_freqs["abs_diff"] / (all_freqs.freq2020_norm)
+    # calculates frequency growth
+    all_freqs["abs_diff_norm"] = np.abs(all_freqs.freq2020_norm - all_freqs.freq2010)/ (all_freqs.freq2010)
 
     all_freqs["relative_diff"] = 2*np.abs(all_freqs.freq2020_norm - all_freqs.freq2010)/ \
                                  (all_freqs.freq2020_norm + all_freqs.freq2010)
@@ -65,43 +65,16 @@ def get_freq_difference_stats(save=True):
 
     return slang_all, nonslang_all, hybrid_all
 
-def plot_slang_nonslang_comparison(s_all, ns_all, curr_col="abs_diff2_norm",
-                                   title="absolute subtracted difference",
-                                   bins=22):
-    plt.hist([ns_all[curr_col], s_all[curr_col]],
-             label=["nonslang", "slang"],
-             color=["mediumslateblue", "darkorange"],
-             bins=bins)
-    plt.legend()
-    plt.xlabel("log(2020 frequency/2010 frequency)")
-    plt.title("Frequency change between 2010 and 2020")
-    plt.show()
-
-def plot_3category_comparison(s_all, ns_all,h_all):
-    curr_col = "log_diff"
-    plt.hist([ns_all[curr_col], s_all[curr_col], h_all[curr_col]],
-             label=["nonslang", "slang", "hybrid"],
-             #for a lighter hybrid color : "xkcd:robin's egg"
-             color=["mediumslateblue", "darkorange", "xkcd:bright sky blue"],
-             bins=22)
-    plt.legend()
-    plt.xlabel("log(2020 frequency/2010 frequency)")
-    plt.title("Frequency change between 2010 and 2020")
-    plt.show()
-
-
 def print_slang_nonslang_comparison(s_all, ns_all):
-    print("results for normalized absolute distance using normalized 2020:")
-    print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col = "abs_diff2_norm")
+    print("results for log(freq 2020/freq 2010):")
+    print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col="log_diff")
 
-    print("results for normalized absolute distance using original 2020:")
-    print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col = "abs_diff_norm")
+    print("results for absolute value of log(freq 2020/freq 2010):")
+    print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col="abs_log_diff")
 
     print("results for normalized 2020 freqs divided by 2010 freqs:")
-    print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col="freq_diff_norm")
+    print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col="freq_diff")
 
-    print("results for larger year freqs divided by smaller freqs, with normalized 2020:")
-    print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col="div_freq_larger_norm")
 
 def print_averages_and_medians(s_all, ns_all, curr_col):
     print("average: slang={}, nonslang={}, \n median: slang={}, nonslang={}".format(
@@ -124,7 +97,6 @@ def print_average_frequencies():
           avgs["slang 2020"]/avgs["slang 2010"])
     print("the frequency of sample words between 2010 and 2020, increased times ",
           avgs["sample 2020"]/avgs["sample 2010"])
-
 
 print_average_frequencies()
 get_freq_difference_stats()

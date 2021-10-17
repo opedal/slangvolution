@@ -11,7 +11,7 @@ old_slang_reps, new_slang_reps = get_data_for_tweets(type='slang')
 old_nonslang_reps, new_nonslang_reps = get_data_for_tweets(type='nonslang')
 old_hybrid_reps, new_hybrid_reps = get_data_for_tweets(type='hybrid')
 
-words_path = "data/word-lists/all_words_300_change_scores.csv"
+words_path = "../data/word-lists/all_words_300_change_scores.csv"
 all_words_df = pd.read_csv(words_path)
 slang_word_list = list(all_words_df[all_words_df.type == "slang"].word)
 nonslang_word_list = list(all_words_df[all_words_df.type == "nonslang"].word)
