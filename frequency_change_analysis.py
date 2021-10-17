@@ -1,5 +1,9 @@
 import pandas as pd
 import numpy as np
+import os.path as osp
+
+# internal imports
+import config
 
 def divide_by_larger_freq(X, colname1="freq2020", colname2="freq2010"):
     x,y = X[colname1], X[colname2]
@@ -34,21 +38,21 @@ def merge_freq_dfs(freq2010, freq2020, NORMALIZING_CONSTANT=6.4):
 
     return all_freqs
 
-def get_freq_difference_stats(file_names, file_path="../data/frequencies", save=True):
-    slang2010 = pd.read_csv(file_names["slang 2010"])
-    slang2020 = pd.read_csv(file_names["slang 2020"])
+def get_freq_difference_stats(file_names, file_path="data/frequencies", save=True):
+    slang2010 = pd.read_csv(osp.join(file_path, file_names["slang 2010"]))
+    slang2020 = pd.read_csv(osp.join(file_path,file_names["slang 2020"]))
     slang_all = merge_freq_dfs(slang2010, slang2020)
-    if save: slang_all.to_csv("data/frequencies/slang_all_freqs.csv")
+    if save: slang_all.to_csv(osp.join(file_path,"slang_all_freqs.csv"))
 
-    nonslang2010 = pd.read_csv(file_names["nonslang 2010"])
-    nonslang2020 = pd.read_csv(file_names["nonslang 2020"])
+    nonslang2010 = pd.read_csv(osp.join(file_path,file_names["nonslang 2010"]))
+    nonslang2020 = pd.read_csv(osp.join(file_path,file_names["nonslang 2020"]))
     nonslang_all = merge_freq_dfs(nonslang2010, nonslang2020)
-    if save: nonslang_all.to_csv("data/frequencies/nonslang_all_freqs.csv")
+    if save: nonslang_all.to_csv(osp.join(file_path,"nonslang_all_freqs.csv"))
 
-    hybrid2010 = pd.read_csv(file_names["hybrid 2010"])
-    hybrid2020 = pd.read_csv(file_names["hybrid 2020"])
+    hybrid2010 = pd.read_csv(osp.join(file_path,file_names["hybrid 2010"]))
+    hybrid2020 = pd.read_csv(osp.join(file_path,file_names["hybrid 2020"]))
     hybrid_all = merge_freq_dfs(hybrid2010, hybrid2020)
-    if save: hybrid_all.to_csv("data/frequencies/hybrid_all_freqs.csv")
+    if save: hybrid_all.to_csv(osp.join(file_path,"hybrid_all_freqs.csv"))
 
     return slang_all, nonslang_all, hybrid_all
 
@@ -71,6 +75,7 @@ def print_averages_and_medians(s_all, ns_all, curr_col):
                                                                         ))
 
 def print_average_frequencies():
+    file_names = config.FREQ_FILE_NAMES
     avgs = {}
     for (k,fn) in file_names.items():
         df = pd.read_csv(fn)
@@ -83,7 +88,3 @@ def print_average_frequencies():
           avgs["slang 2020"]/avgs["slang 2010"])
     print("the frequency of sample words between 2010 and 2020, increased times ",
           avgs["sample 2020"]/avgs["sample 2010"])
-
-print_average_frequencies()
-get_freq_difference_stats()
-

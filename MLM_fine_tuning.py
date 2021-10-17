@@ -189,7 +189,7 @@ if __name__ == "__main__":
         if args.simplified_path: model_save_path = "models/roberta_UD"
         else: model_save_path = "models/roberta_UD_lr"+str(lr)+"_epochs"+str(args.num_epochs)
 
-        model.save_pretrained()
+        model.save_pretrained(save_directory=model_save_path)
         textfile = open("losses/model_lr"+str(lr)+"_epochs"+str(args.num_epochs)+"_train.txt", "w")
         for elem in epoch_train_losses:
             textfile.write(str(elem) + "\n")
