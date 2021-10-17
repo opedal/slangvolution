@@ -5,7 +5,6 @@ import pandas as pd
 import regex as re
 import os
 from tqdm import tqdm
-import argparse
 # Sklearn
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.mixture import GaussianMixture
@@ -486,48 +485,14 @@ def get_true_semeval():
     # print("RESULTS APD ALL LAYERS")
     # print_results(results)
 
-def get_data_for_semeval(reps="sum"):
+def get_data_for_semeval(reps="sum", reps_abs_path="../"):
     with open(config.SEMEVAL_TARGETS_PATH) as f:
         target_words = f.read().strip()
     target_words = [word for word in re.split("\n", target_words)]
 
     corpus1_reps_path = 'corpus1_'+reps+'_layer_reps.pickle'
-    corpus1_reps = load_corpus_reps(corpus1_reps_path)
+    corpus1_reps = load_corpus_reps(os.path.join(reps_abs_path,corpus1_reps_path))
     corpus2_reps_path = 'corpus2_'+reps+'_layer_reps.pickle'
-    corpus2_reps = load_corpus_reps(corpus2_reps_path)
+    corpus2_reps = load_corpus_reps(os.path.join(reps_abs_path,corpus2_reps_path))
 
     return target_words, corpus1_reps, corpus2_reps
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--reps", type=str, default="sum")
-    parser.add_argument("--method", type=str, default="apd")
-    parser.add_argument("--reduction", type=str, default="pca")
-    parser.add_argument("--silhouette", type=bool, default=True)
-    args = parser.parse_args()
-
-    # directory for results output
-    if not os.path.exists("results"):
-        os.mkdir("results")
-    print("--- Getting data ---")
-    target_words, old_reps, new_reps = get_data_for_semeval(reps=args.reps)
-
-    print("--- Scoring ---")
-    if args.method == "apd":
-        results = get_APD_semantic_change_scores(old_reps, new_reps, target_words)
-        textfile = open("results/APD_results.txt", "w")
-
-    elif args.method == "clustering":
-        results = get_cluster_semantic_change_scores(old_reps, new_reps, target_words,
-                                                         method=args.reduction,
-                                                         silhouette=args.silhouette)
-        if args.silhouette:
-            textfile = open("results/KMeans_GMM_scores_" + args.reduction + "_silhouette_results.txt", "w")
-        else:
-            textfile = open("results/KMeans_GMM_scores_" + args.reduction + "_results.txt", "w")
-
-
-    for elem in results:
-        textfile.write(str(elem) + "\n")
-    textfile.close()
-
