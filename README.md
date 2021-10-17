@@ -11,7 +11,7 @@ To retrieve tweets run:
 
 To approximate word frequency run: 
 
-`get_word_freqs.py --type slang --year 2020 --num-dates 40`
+`get_word_frequencies.py --type slang --year 2020 --num-dates 40`
 
 What each parameter means: 
 - type: string corresponding to word type, can be slang, nonslang, or both
@@ -36,7 +36,7 @@ Then, apply RoBERTa to the tweets to get the representations: `representations_r
 
 To get the APD scores on representations reduced to 100 dimensions with PCA run:
 
-`semantic_change_scores.py --method apd --reduction pca`
+`get_semantic_change_scores.py --method apd --reduction pca`
 
 Once the frequencies are saved, run 
 
