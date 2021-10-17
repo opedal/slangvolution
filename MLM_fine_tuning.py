@@ -4,7 +4,6 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.optim.lr_scheduler import StepLR
 import argparse
-import transformers
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from transformers import AdamW
 from sklearn.model_selection import train_test_split

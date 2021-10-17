@@ -1,6 +1,7 @@
 from sklearn.decomposition import PCA
 import os
 import pandas as pd
+import numpy as np
 from scipy.stats import ttest_ind
 from mlxtend.evaluate import permutation_test
 
@@ -35,3 +36,24 @@ def independence_tests(slang_scores, nonslang_scores):
                                       method="approximate", seed=111, num_rounds=10000
                                       )
     print("t-test p-value is", t_test_pval, "and permutation test p-value is", perm_test_pval)
+
+def perm_test(slang_APD, nonslang_APD):
+    import copy
+    true_diff = np.abs(np.average(slang_APD) - np.average(nonslang_APD))
+    all_APDs = list(slang_APD) + list(nonslang_APD)
+
+    pooled_distribution = copy.copy(all_APDs)
+    # Initialize permutation:
+    random_diffs = []
+    # Define p (number of permutations):
+    permutation_num = 1000
+    # Permutation loop:
+    for i in range(0, permutation_num):
+        # Shuffle the data:
+        np.random.shuffle(pooled_distribution)
+        # Compute permuted absolute difference of your two sampled distributions and store it in pD:
+        random_diffs.append(np.abs(np.average(pooled_distribution[0:int(len(pooled_distribution) / 2)]) -
+                                   np.average(pooled_distribution[int(len(pooled_distribution) / 2):])))
+
+    p_val = len(np.where(random_diffs >= true_diff)[0]) / permutation_num
+    return p_val

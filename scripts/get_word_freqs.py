@@ -6,7 +6,7 @@ from tweet_retrieval import *
 
 if __name__ == '__main__':
     REQUEST_LIMIT = 300
-    words_path = "data/word-lists/all_words_300.csv"
+    words_path = "../data/word-lists/all_words_300.csv"
     PATHS = {"slang2010":"freq_slang_counts_24h_2010.csv",
              "slang2020": "freq_slang_counts_24h_2020.csv",
              "nonslang2010":"freq_nonslang_counts_24h_2010.csv",
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both","sample"}
     parser.add_argument("--year", type=int, default=2010)
-    parser.add_argument("--save-dir", type=str, default="data/frequencies/")
+    parser.add_argument("--save-dir", type=str, default="../data/frequencies/")
     parser.add_argument("--iter", type=int, default=5)
     parser.add_argument("--hour-gap",type=int,default=48)
     parser.add_argument("--num-dates",type=int,default=40)

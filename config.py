@@ -25,5 +25,6 @@ TWEET_PATHS = {'slang': {"old": "old_slang_tweets.pickle",
                }
 
 SEMEVAL_PATH = "/Users/alacrity/Documents/uni/CSNLP/project/semeval2020_ulscd_eng/truth/graded.txt"
+SEMEVAL_TARGETS_PATH = "/Users/alacrity/Documents/uni/CSNLP/project/semeval2020_ulscd_eng/targets.txt"
 
 MIN_TWEETS_PER_WORD = 150

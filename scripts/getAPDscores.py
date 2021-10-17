@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from mlxtend.evaluate import permutation_test
 ## internal imports
-from semantic_change_scores import get_data_for_tweets, get_APD_scores
+from semantic_change import get_data_for_tweets, get_APD_scores
 from config import MIN_TWEETS_PER_WORD, SLANG_COLOR, NONSLANG_COLOR
 
 ### Get Representations
