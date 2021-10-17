@@ -9,7 +9,7 @@ To retrieve tweets run:
 
 `get_tweets.py --type slang --year 2020 --num-dates 40 --hour-gap 24 --max-results 50`
 
-And for approximating word frequency run: 
+To approximate word frequency run: 
 
 `get_word_freqs.py --type slang --year 2020 --num-dates 40`
 
