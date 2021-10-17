@@ -1,6 +1,5 @@
 import argparse
 import os
-
 from semantic_change import *
 
 if __name__ == '__main__':
@@ -15,7 +14,7 @@ if __name__ == '__main__':
     if not os.path.exists("results"):
         os.mkdir("results")
     print("--- Getting data ---")
-    target_words, old_reps, new_reps = get_data_for_semeval(reps=args.reps)
+    target_words, old_reps, new_reps = get_data_for_semeval(reps=args.reps, reps_abs_path="../data/representations")
 
     print("--- Scoring ---")
     if args.method == "apd":
@@ -30,7 +29,6 @@ if __name__ == '__main__':
             textfile = open("results/KMeans_GMM_scores_" + args.reduction + "_silhouette_results.txt", "w")
         else:
             textfile = open("results/KMeans_GMM_scores_" + args.reduction + "_results.txt", "w")
-
 
     for elem in results:
         textfile.write(str(elem) + "\n")

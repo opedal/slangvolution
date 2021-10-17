@@ -1,18 +1,5 @@
 import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
-from utils import independence_tests
-from visualizations import plot_3category_comparison, plot_slang_nonslang_comparison
-
-file_names = {"slang 2020": 'data/frequencies/freq_slang_counts_24h_2020.csv',
-              "slang 2010": 'data/frequencies/freq_slang_counts_24h_2010.csv',
-              "nonslang 2020": 'data/frequencies/freq_nonslang_counts_24h_2020.csv',
-              "nonslang 2010": 'data/frequencies/freq_nonslang_counts_24h_2010.csv',
-              "sample 2020": 'data/frequencies/freq_sample_words_24h_2020.csv',
-              "sample 2010": 'data/frequencies/freq_sample_words_24h_2010.csv',
-              "hybrid 2010": "data/frequencies/freq_hybrid_counts_24h_2010.csv",
-              "hybrid 2020": "data/frequencies/freq_hybrid_counts_24h_2020.csv",
-              }
 
 def divide_by_larger_freq(X, colname1="freq2020", colname2="freq2010"):
     x,y = X[colname1], X[colname2]
@@ -47,7 +34,7 @@ def merge_freq_dfs(freq2010, freq2020, NORMALIZING_CONSTANT=6.4):
 
     return all_freqs
 
-def get_freq_difference_stats(save=True):
+def get_freq_difference_stats(file_names, file_path="../data/frequencies", save=True):
     slang2010 = pd.read_csv(file_names["slang 2010"])
     slang2020 = pd.read_csv(file_names["slang 2020"])
     slang_all = merge_freq_dfs(slang2010, slang2020)
@@ -74,7 +61,6 @@ def print_slang_nonslang_comparison(s_all, ns_all):
 
     print("results for normalized 2020 freqs divided by 2010 freqs:")
     print_averages_and_medians(s_all=s_all, ns_all=ns_all, curr_col="freq_diff")
-
 
 def print_averages_and_medians(s_all, ns_all, curr_col):
     print("average: slang={}, nonslang={}, \n median: slang={}, nonslang={}".format(

@@ -105,12 +105,11 @@ def normalize_vectors(X):
         res.append(x/np.linalg.norm(x))
     return res
 
-def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets):
+def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets, do_pca=True, do_umap=False):
     results = []
     for target in tqdm(targets):
         scores = {}
         scores["word"] = target
-
         X1 = [elem.detach().numpy() for elem in corpus1_reps[target]]
         X2 = [elem.detach().numpy() for elem in corpus2_reps[target]]
         X = X1 + X2
@@ -122,42 +121,41 @@ def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets):
         scores["APD Combined Manhattan"] = compute_average_pairwise_difference(X1, X2, dist="combined3a")
         scores["APD Combined Canberra"] = compute_average_pairwise_difference(X1, X2, dist="combined3b")
         scores["APD Combined All 4"] = compute_average_pairwise_difference(X1, X2, dist="combined4")
-
         for dim in [2, 5, 10, 20, 50, 100]:
-            X_reduced = apply_PCA(X, dim)
-            scores[f"APD Manhattan pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                    X_reduced[len(X1):],
-                                                                                    dist="manhattan")
-            scores[f"APD Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                 X_reduced[len(X1):],
-                                                                                 dist="canberra")
-            scores[f"APD Combined Manhattan pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                   X_reduced[len(X1):],
-                                                                                   dist="combined3a")
-            scores[f"APD Combined Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                              X_reduced[len(X1):],
-                                                                                              dist="combined3b")
-            scores[f"APD Combined All 4 pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                              X_reduced[len(X1):],
-                                                                                              dist="combined4")
-
-            X_reduced = apply_UMAP(X, dim)
-            scores[f"APD Manhattan umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                    X_reduced[len(X1):],
-                                                                                    dist="manhattan")
-            scores[f"APD Canberra umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                   X_reduced[len(X1):],
-                                                                                   dist="canberra")
-            scores[f"APD Combined Manhattan umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+            if do_pca:
+                X_reduced = apply_PCA(X, dim)
+                scores[f"APD Manhattan pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                        X_reduced[len(X1):],
+                                                                                        dist="manhattan")
+                scores[f"APD Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                     X_reduced[len(X1):],
+                                                                                     dist="canberra")
+                scores[f"APD Combined Manhattan pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                       X_reduced[len(X1):],
+                                                                                       dist="combined3a")
+                scores[f"APD Combined Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                                  X_reduced[len(X1):],
+                                                                                                  dist="combined3b")
+                scores[f"APD Combined All 4 pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                                  X_reduced[len(X1):],
+                                                                                                  dist="combined4")
+            if do_umap:
+                X_reduced = apply_UMAP(X, dim)
+                scores[f"APD Manhattan umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                        X_reduced[len(X1):],
+                                                                                        dist="manhattan")
+                scores[f"APD Canberra umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                       X_reduced[len(X1):],
+                                                                                       dist="canberra")
+                scores[f"APD Combined Manhattan umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                                 X_reduced[len(X1):],
+                                                                                                 dist="combined3a")
+                scores[f"APD Combined Canberra umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                                                                                                X_reduced[len(X1):],
+                                                                                                dist="combined3b")
+                scores[f"APD Combined All 4 umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
                                                                                              X_reduced[len(X1):],
-                                                                                             dist="combined3a")
-            scores[f"APD Combined Canberra umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                            X_reduced[len(X1):],
-                                                                                            dist="combined3b")
-            scores[f"APD Combined All 4 umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                         X_reduced[len(X1):],
-                                                                                         dist="combined4")
-
+                                                                                             dist="combined4")
         results.append(scores)
     return results
 

@@ -1,6 +1,6 @@
 venv/
 models/
-losses/
+results/losses/
 results/
 .ipynb_checkpoints/
 .idea/

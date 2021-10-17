@@ -126,8 +126,8 @@ if __name__ == "__main__":
     # directories for saving models and results
     if not os.path.exists("models"):
         os.mkdir("models")
-    if not os.path.exists("losses"):
-        os.mkdir("losses")
+    if not os.path.exists("results/losses"):
+        os.mkdir("results/losses")
 
     np.random.seed(SEED)
     torch.manual_seed(SEED)
