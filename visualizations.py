@@ -228,6 +228,24 @@ def plot_log_freqs_change(slang_freq_df, nonslang_freq_df):
     plt.show()
 
 
+def plot_polysemy(slang_polysemy_df,nonslang_polysemy_df,hybrid_polysemy_df=None):
+    if hybrid_polysemy_df is not None:
+        plt.hist([slang_polysemy_df.polysemy,nonslang_polysemy_df.polysemy, hybrid_polysemy_df.polysemy],
+                 color=["darkorange", "mediumslateblue", "xkcd:bright sky blue"],
+                 label=["slang", "nonslang", "hybrid"])
+        plt.legend()
+        plt.title("Number of Word Senses - Distribution")
+        plt.xlabel("# word senses")
+        plt.show()
+    else:
+        plt.hist([slang_polysemy_df.polysemy, nonslang_polysemy_df.polysemy],
+                 color=["darkorange", "mediumslateblue"],
+                 label=["slang", "nonslang"])
+        plt.legend()
+        plt.title("Number of Word Senses - Distribution")
+        plt.xlabel("# word senses")
+        plt.show()
+
 if __name__ == '__main__':
     import pickle5 as pickle
     from sklearn.decomposition import PCA

@@ -12,7 +12,7 @@ import argparse
 from os import path as osp
 import sys
 
-BEARER_TOKEN = ""
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt"
 
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
@@ -47,18 +47,14 @@ def auth():
 
 def create_url(word,start_time, end_time, max_results=500):
     query = word+", lang:en"
-    #"from:twitterdev -is:retweet"
     # Tweet fields are adjustable.
-    # Options include:
-    # attachments, author_id, context_annotations,
-    # conversation_id, created_at, entities, geo, id,
-    # in_reply_to_user_id, lang, non_public_metrics, organic_metrics,
-    # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
+    # Options include: attachments, author_id, context_annotations, conversation_id, created_at, entities, geo, id,
+    # in_reply_to_user_id, lang, non_public_metrics, organic_metrics, possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
     # source, text, and withheld
     start_time = "start_time="+start_time #2021-01-17T00:00:00Z"
     end_time = "end_time="+end_time #2021-01-18T00:00:00Z"
     max_results_str = "max_results="+str(max_results)
-    tweet_fields = "tweet.fields=author_id,created_at"
+    tweet_fields = "tweet.fields=created_at"
     url = "https://api.twitter.com/2/tweets/search/all?query={}&{}&{}&{}&{}".format(
         query, start_time, end_time, max_results_str, tweet_fields
     )
@@ -93,7 +89,6 @@ def update_tweet_df(json_response, tweets_df, word):
         tweets_df['month'].append(get_month(tweet['created_at']))
         tweets_df['day'].append(get_day(tweet['created_at']))
         tweets_df['text'].append(tweet['text'])
-        tweets_df['author_id'].append(tweet['author_id'])
     return tweets_df
 
 def get_tweet_count(json_response):
@@ -107,7 +102,7 @@ def get_tweets_df(df_path):
                      'month',
                      'day',
                      'text',
-                     'author_id']
+                     ]
     try:
         tweets_df = pd.read_csv(df_path)
         tweets_df = tweets_df[tweet_columns]
@@ -119,7 +114,6 @@ def get_tweets_df(df_path):
                      'month': [],
                      'day': [],
                      'text': [],
-                     'author_id': [],
                      }
     return tweets_df
 
@@ -161,14 +155,12 @@ def get_word_tweets_df(word='yeet',
     date_spans = get_random_dates(start_date=FIRST_DATE, num_dates=num_dates,
                                   hour_gap=gap4word(word, default_gap=hour_gap))
     for dt_spn in date_spans:
-        print("getting tweets for ", dt_spn[0])
         try:
             start_date = datetime2apidate(dt_spn[0])
             end_date = datetime2apidate(dt_spn[1])
             url = create_url(word=word, start_time=start_date, end_time=end_date,max_results=max_results_per_response)
             json_response, is_successful = connect_to_endpoint(url, headers)
             tweets_df = update_tweet_df(json_response=json_response, tweets_df=tweets_df, word=word)
-            #print(json.dumps(json_response, indent=4, sort_keys=True))
         except:
             continue
     tweets_df = pd.DataFrame(tweets_df)
@@ -214,12 +206,23 @@ def save_word_freqs(words_list):
             print("frequency of ", word, "is", freq)
     sys.stdout = original_stdout
 
+def get_words_list(word_type, words_path="word-lists/all_words_300.csv"):
+    selected_words_df = pd.read_csv(words_path)
+    words_list = list(selected_words_df[selected_words_df.type == args.type].word)
+    return words_list
+
 if __name__ == "__main__":
     REQUEST_LIMIT=50
 
-    words_path = "word-lists/all_words_300.csv"
+    PATHS = {2010: "tweets_old",
+             2020:"tweets_new",
+             "slang":"slang_word_tweets",
+             "nonslang":"nonslang_word_tweets",
+             "both":"hybrid_word_tweets"
+             }
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--type", type=str, default="both") #{"slang","nonslang","both"}
+    parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both"}
     parser.add_argument("--year", type=int, default=2010)
     parser.add_argument("--save-dir", type=str, default="data/")
     parser.add_argument("--iter", type=int, default=5)
@@ -228,38 +231,29 @@ if __name__ == "__main__":
     parser.add_argument("--max-results",type=int,default=30)
     args = parser.parse_args()
 
-    selected_words_df = pd.read_csv(words_path)
-    words_list = list(selected_words_df[selected_words_df.type == args.type].word)
-    PATHS = {2010: "tweets_old",
-             2020:"tweets_new",
-             "slang":"slang_word_tweets",
-             "nonslang":"nonslang_word_tweets",
-             "both":"hybrid_word_tweets"
-             }
-
-    save_dir = os.path.join(args.save_dir,PATHS[args.year], PATHS[args.type])
+    words_list = get_words_list(word_type=args.type)
+    save_dir = os.path.join(args.save_dir, PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
+
     num_words_until_pause = np.ceil(REQUEST_LIMIT/args.num_dates) + 1
+
     for k in range(0,args.iter):
-        i = 0
+        num_words_since_pause = 0
         print("----- ", k, "-----")
         for word in words_list:
             print("getting tweets for", word)
-            got_tweets = get_word_tweets_df(word, year=args.year,
+            got_tweets = get_word_tweets_df(word,
+                                            year=args.year,
                                             save_path=save_dir,
                                             num_dates=args.num_dates,
                                             hour_gap=args.hour_gap,
                                             max_results_per_response=args.max_results
                                             )
-            if got_tweets: i += 1
+            if got_tweets: num_words_since_pause += 1
             print("saved tweets for", word)
-            ## Update slang word dataframe so that we don't sample tweets from this word again
-            idx = np.where(selected_words_df.word == word)
-            selected_words_df.loc[idx[0][0], 'is_saved'] = True
-            selected_words_df.to_csv(words_path)
             ## Wait 15 minutes to avoid request rate restrictions
-            if i == num_words_until_pause:
-                i = 0
+            if num_words_since_pause == num_words_until_pause:
                 print("will wait 15 minutes now")
                 time.sleep(15*60)
                 print("finished waiting")
+                num_words_since_pause = 0
