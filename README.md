@@ -1,5 +1,5 @@
 # Slangvolution
-Git repo for the paper "Slangvolution:: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang"
+Git repo for the paper "Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang"
 
 ## Data Preparation
 
