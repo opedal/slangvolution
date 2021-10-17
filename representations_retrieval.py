@@ -18,15 +18,23 @@ def text_to_list(text):
     sentence_list = re.split("\n", text)
     return [re.split("\s", sentence) for sentence in sentence_list]
 
-def filter_on_occurrences(input_corpus, targets):
+def filter_on_occurrences(input_corpus, target_words):
+    """
+    only keep sentences that contain the target words
+    """
     output_corpus = []
     for sentence in tqdm(input_corpus):
-        for target in targets:
+        for target in target_words:
             if target in sentence:
                 output_corpus.append(sentence)
     return output_corpus
 
 def prepare_sentence(sent):
+    """
+    Pre-process a tweet (i.e. sentence):
+     - remove urls hashtags & some special charachters
+     - separate punctuation from the word so they are tokenized separately
+    """
     if type(sent) == str:
         sent = sent.split(" ")
     elif type(sent) == int or type(sent) == float:
@@ -76,7 +84,6 @@ def get_word_representation(target_word, sentence, model, tokenizer, reps="sum")
     the last layer representation
     Note: If target_word appears twice in sentence, will only pick the first one
     """
-
     decoded_list, inputs = tokenize_sentence(sentence, tokenizer)
 
     if target_word not in decoded_list:

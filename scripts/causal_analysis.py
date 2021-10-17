@@ -1,34 +1,28 @@
 import pandas as pd
+from os import path as osp
+# Internal Imports
+import config
 from utils import independence_tests
 from visualizations import plot_log_freqs, plot_polysemy
 
 if __name__ == '__main__':
-    polysemy_file_paths = {"slang": "../data/polysemy/polysemy_slang.csv",
-                           "nonslang": "../data/polysemy/polysemy_nonslang.csv",
-                           "hybrid": "../data/polysemy/polysemy_hybrid.csv",
-                           }
-
-    freq_file_paths = {"slang 2010": "../data/frequencies/freq_slang_counts_24h_2010.csv",
-                       "slang 2020": "../data/frequencies/freq_slang_counts_24h_2020.csv",
-                       "nonslang 2010": "../data/frequencies/freq_nonslang_counts_24h_2010.csv",
-                       "nonslang 2020": "../data/frequencies/freq_nonslang_counts_24h_2020.csv",
-                       }
+    polysemy_folder_path = "../data/polysemy"
+    freqs_folder_path = "../data/frequencies"
+    freq_file_names = config.FREQ_FILE_NAMES
+    polysemy_file_names = config.POLYSEMY_FILE_NAMES
 
     causal_df = pd.read_csv("../data/causal_data_input.csv")
 
-    hybrid_polysemy_df = pd.read_csv(polysemy_file_paths["hybrid"])
-    hybrid_polysemy_df["polysemy"] = hybrid_polysemy_df["num_s"] +  hybrid_polysemy_df["num_ns"]
-    hybrid_polysemy_df.to_csv(polysemy_file_paths["hybrid"])
-
-    slang_freq_df = pd.read_csv(freq_file_paths["slang 2010"])
-    nonslang_freq_df = pd.read_csv(freq_file_paths["nonslang 2010"])
+    slang_freq_df = pd.read_csv(osp.join(freqs_folder_path, freq_file_names["slang 2010"]))
+    nonslang_freq_df = pd.read_csv(osp.join(freqs_folder_path, freq_file_names["nonslang 2010"]))
 
     print("Comparing 2010 Frequencies:")
     plot_log_freqs(slang_freqs=slang_freq_df.freq.values, nonslang_freqs=nonslang_freq_df.freq.values)
     independence_tests(slang_freq_df.freq.values, nonslang_freq_df.freq.values)
 
-    slang_polysemy_df = pd.read_csv(polysemy_file_paths["slang"])
-    nonslang_polysemy_df = pd.read_csv(polysemy_file_paths["nonslang"])
+    hybrid_polysemy_df = pd.read_csv(osp.join(polysemy_folder_path, polysemy_file_names["hybrid"]))
+    slang_polysemy_df = pd.read_csv(osp.join(polysemy_folder_path, polysemy_file_names["slang"]))
+    nonslang_polysemy_df = pd.read_csv(osp.join(polysemy_folder_path, polysemy_file_names["nonslang"]))
 
     print("Comparing Polysemy:")
     independence_tests(slang_polysemy_df.polysemy.values, nonslang_polysemy_df.polysemy.values)

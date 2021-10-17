@@ -1,3 +1,10 @@
+"""
+Code for semantic change score calculation.
+Inludes:
+- various clustering methods (KMEANS, GMM, DBSCAN)
+- various ensemble Average Pairwise Distance (APD) metrics
+"""
+# General
 import pickle
 from collections import Counter
 import numpy as np

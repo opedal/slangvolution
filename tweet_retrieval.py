@@ -1,19 +1,15 @@
+"""
+Code for accessing the Twitter API to retrieve tweets & frequency approximations
+"""
 import requests
-import os
-import json
 import datetime
 import random
 import pandas as pd
-import numpy as np
-# To set your environment variables in your terminal run the following line:
-# export 'BEARER_TOKEN'='<your_bearer_token>'
-import time
-import argparse
 from os import path as osp
-import sys
 
-######### Authentication Related Code
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAM0TSAEAAAAA%2BgyH%2F7NXwQnQ%2FyT0ebZ5nsQ3N5Y%3DtW4YxDF7ByzGMCpW0pvIPMFuSrpRq4mIXpPoEePyQSloe0WfZt"
+#-------------------- Authentication & Connection to the API --------------------#
+
+BEARER_TOKEN = ""
 
 def auth():
     return BEARER_TOKEN
@@ -62,7 +58,8 @@ def connect_to_endpoint(url, headers):
         raise Exception(response.status_code, response.text)
     return response.json(), (response.status_code == 200)
 
-######### Date Sampling & Retrieval
+#-------------------- Date Sampling & Formatting --------------------#
+
 def random_sample_date(start_date,day_gap=365):
     td = random.random() * datetime.timedelta(days=day_gap)
     dt = start_date + td
@@ -100,7 +97,8 @@ def get_month(utc_str):
 def get_day(utc_str):
     return utc_str[8:10]
 
-######### Updating the Tweet DataFrame
+#-------------------- Updating the Tweet DataFrame --------------------#
+
 def update_tweet_df(json_response, tweets_df, word):
     data = json_response['data']
     for tweet in data:

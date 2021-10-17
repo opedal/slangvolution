@@ -48,3 +48,7 @@ FREQ_FILE_NAMES = {"slang 2020": 'freq_slang_counts_24h_2020.csv',
               "hybrid 2020": "freq_hybrid_counts_24h_2020.csv",
               }
 
+POLYSEMY_FILE_NAMES = {"slang": "polysemy_slang.csv",
+                       "nonslang": "polysemy_nonslang.csv",
+                       "hybrid": "polysemy_hybrid.csv",
+                       }

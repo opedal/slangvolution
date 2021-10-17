@@ -3,7 +3,7 @@ import numpy as np
 import seaborn as sns
 from config import SLANG_COLOR, NONSLANG_COLOR, HYBRID_COLOR
 
-#### Plots of UD (Urban Dictionary) Data
+#-------------------- plots of UD (Urban Dictionary) --------------------#
 def plot_year_histogram(years, bin_num=10, color='mediumslateblue',
                         title="Distribution of years in which the definitions were posted"):
     fig, ax = plt.subplots(figsize=(4,1.7))
@@ -34,7 +34,7 @@ def plot_like_dislike_ratio(defs):
     plt.ylabel("log of upvote/downvote ratio")
     plt.show()
 
-#### Plots of representations & clusters
+#-------------------- plots of representations & clusters-------------------#
 class Label2Color:
     def __init__(self):
         self.NOISE = - 1
@@ -216,12 +216,12 @@ def plot_old_vs_new(old_reps, new_reps, word):
     plt.title("word representations of " + word + " in 2d with PCA")
     plt.show()
 
-#### Plots for statistical slang/nonslang comparison
+#-------------------- plots for statistical comparison: slang/nonslang  ------------------#
 
 def plot_log_freqs(slang_freqs, nonslang_freqs, add_to_title=" in 2010"):
     plt.hist([[np.log(k) for k in slang_freqs],
               [np.log(k) for k in nonslang_freqs]],
-             color=[SLANG_COLOR,NONSLANG_COLOR],
+             color=[SLANG_COLOR, NONSLANG_COLOR],
              label=["slang","nonslang"])
     plt.xlabel("log of # occurrences in 24 hours")
     plt.legend()
@@ -271,17 +271,3 @@ def plot_slang_nonslang_comparison(s_all_df, ns_all_df, curr_col="log_diff",
     plt.xlabel(xlabel)
     plt.title(title)
     plt.show()
-
-if __name__ == '__main__':
-    import pickle5 as pickle
-    from sklearn.decomposition import PCA
-    oldpath = "/Users/alacrity/Documents/GitHub/slangvolution-semantic-change-main/old_slang_reps.pickle"
-    newpath = "/Users/alacrity/Documents/GitHub/slangvolution-semantic-change-main/new_slang_reps.pickle"
-
-    with open(oldpath, "rb") as f:
-        old_reps = pickle.load(f)
-
-    with open(newpath, "rb") as f:
-        new_reps = pickle.load(f)
-
-    plot_PCA_tradeoff(target="bromance", pca_model=PCA(), corpus1_reps=old_reps, corpus2_reps=new_reps)
