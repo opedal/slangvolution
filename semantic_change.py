@@ -123,10 +123,10 @@ def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets, do_pca=T
         scores["APD Euclidian"] = compute_average_pairwise_difference(X1, X2)
         scores["APD Cosine"] = compute_average_pairwise_difference(X1, X2, dist="cosine")
         scores["APD Combined"] = compute_average_pairwise_difference(X1, X2, dist="combined")
-        scores["APD Manhattan"] = compute_average_pairwise_difference(X1, X2, dist="manhattan")
-        scores["APD Canberra"] = compute_average_pairwise_difference(X1, X2, dist="canberra")
-        scores["APD Combined Manhattan"] = compute_average_pairwise_difference(X1, X2, dist="combined3a")
-        scores["APD Combined Canberra"] = compute_average_pairwise_difference(X1, X2, dist="combined3b")
+        # scores["APD Manhattan"] = compute_average_pairwise_difference(X1, X2, dist="manhattan")
+        # scores["APD Canberra"] = compute_average_pairwise_difference(X1, X2, dist="canberra")
+        # scores["APD Combined Manhattan"] = compute_average_pairwise_difference(X1, X2, dist="combined3a")
+        # scores["APD Combined Canberra"] = compute_average_pairwise_difference(X1, X2, dist="combined3b")
         scores["APD Combined All 4"] = compute_average_pairwise_difference(X1, X2, dist="combined4")
         for dim in [2, 5, 10, 20, 50, 100]:
             if do_pca:
@@ -134,15 +134,15 @@ def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets, do_pca=T
                 scores[f"APD Manhattan pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
                                                                                         X_reduced[len(X1):],
                                                                                         dist="manhattan")
-                scores[f"APD Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                     X_reduced[len(X1):],
-                                                                                     dist="canberra")
-                scores[f"APD Combined Manhattan pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                       X_reduced[len(X1):],
-                                                                                       dist="combined3a")
-                scores[f"APD Combined Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                                  X_reduced[len(X1):],
-                                                                                                  dist="combined3b")
+                # scores[f"APD Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                #                                                                      X_reduced[len(X1):],
+                #                                                                      dist="canberra")
+                # scores[f"APD Combined Manhattan pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                #                                                                        X_reduced[len(X1):],
+                #                                                                        dist="combined3a")
+                # scores[f"APD Combined Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                #                                                                                   X_reduced[len(X1):],
+                #                                                                                   dist="combined3b")
                 scores[f"APD Combined All 4 pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
                                                                                                   X_reduced[len(X1):],
                                                                                                   dist="combined4")

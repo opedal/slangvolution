@@ -1,3 +1,7 @@
+"""
+Fine tuning the RoBERTa bi-directional language model
+on the Urban Dictionary (UD) data, to familiarise it with slang
+"""
 import numpy as np
 import pandas as pd
 import torch
@@ -110,10 +114,10 @@ def evaluate_model(model, dataloader):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--num-epochs", type=int, default=10)
+    parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--data-path", type=str, default='data/UD_filtered_100000_sampled.csv')
-    parser.add_argument("--small",type=bool, default=False)
+    parser.add_argument("--small",type=bool, default=True)
     parser.add_argument("--maskp",type=float, default=0.15)
     parser.add_argument("--patience",type=int, default=3)
     parser.add_argument("--simplified-path",type=bool, default=True)
@@ -190,11 +194,11 @@ if __name__ == "__main__":
         else: model_save_path = "models/roberta_UD_lr"+str(lr)+"_epochs"+str(args.num_epochs)
 
         model.save_pretrained(save_directory=model_save_path)
-        textfile = open("losses/model_lr"+str(lr)+"_epochs"+str(args.num_epochs)+"_train.txt", "w")
+        textfile = open("results/losses/model_lr"+str(lr)+"_epochs"+str(args.num_epochs)+"_train.txt", "w")
         for elem in epoch_train_losses:
             textfile.write(str(elem) + "\n")
         textfile.close()
-        textfile = open("losses/model"+str(lr)+"_epochs"+str(args.num_epochs)+"_eval.txt", "w")
+        textfile = open("results/losses/model"+str(lr)+"_epochs"+str(args.num_epochs)+"_eval.txt", "w")
         for elem in epoch_eval_losses:
             textfile.write(str(elem) + "\n")
         textfile.close()
