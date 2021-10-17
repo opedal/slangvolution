@@ -36,7 +36,7 @@ Then, apply RoBERTa to the tweets to get the representations: `representations_r
 
 To get the APD scores on representations reduced to 100 dimensions with PCA run:
 
-`semantic_change_scores.py --method apd --reduction pca`
+`get_semantic_change_scores.py --method apd --reduction pca`
 
 Once the frequencies are saved, run 
 
