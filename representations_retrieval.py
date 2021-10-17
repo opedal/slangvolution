@@ -1,3 +1,6 @@
+"""
+Turn tweets into word representations
+"""
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
@@ -15,15 +18,23 @@ def text_to_list(text):
     sentence_list = re.split("\n", text)
     return [re.split("\s", sentence) for sentence in sentence_list]
 
-def filter_on_occurrences(input_corpus, targets):
+def filter_on_occurrences(input_corpus, target_words):
+    """
+    only keep sentences that contain the target words
+    """
     output_corpus = []
     for sentence in tqdm(input_corpus):
-        for target in targets:
+        for target in target_words:
             if target in sentence:
                 output_corpus.append(sentence)
     return output_corpus
 
 def prepare_sentence(sent):
+    """
+    Pre-process a tweet (i.e. sentence):
+     - remove urls hashtags & some special charachters
+     - separate punctuation from the word so they are tokenized separately
+    """
     if type(sent) == str:
         sent = sent.split(" ")
     elif type(sent) == int or type(sent) == float:
@@ -73,7 +84,6 @@ def get_word_representation(target_word, sentence, model, tokenizer, reps="sum")
     the last layer representation
     Note: If target_word appears twice in sentence, will only pick the first one
     """
-
     decoded_list, inputs = tokenize_sentence(sentence, tokenizer)
 
     if target_word not in decoded_list:
@@ -203,7 +213,7 @@ if __name__ == '__main__':
     parser.add_argument("--sem-eval", type=bool, default=False)
     parser.add_argument("--reps", type=str, default="sum")
     parser.add_argument("--data-path", type=str, default='data/tweets_new/hybrid_word_tweets')
-    parser.add_argument("--type", type=str, default="both") #["slang","nonslang","both",[CUSTOM_LIST]]
+    parser.add_argument("--type", type=str, default="slang") #["slang","nonslang","both",[CUSTOM_LIST]]
     parser.add_argument("--semeval-path", type=str, default='data/semeval2020_ulscd_eng')
     parser.add_argument("--model-path",type=str,default="models/roberta_UD")
     args = parser.parse_args()
@@ -239,7 +249,7 @@ if __name__ == '__main__':
 
         if args.type in ["slang","nonslang","both"]:
 
-            words_path = "word-lists/all_words_300.csv"
+            words_path = "data/word-lists/all_words_300.csv"
             selected_words_df = pd.read_csv(words_path)
             words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 

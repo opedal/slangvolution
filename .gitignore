@@ -1,6 +1,6 @@
 venv/
 models/
-losses/
+results/losses/
 results/
 .ipynb_checkpoints/
 .idea/
@@ -12,6 +12,6 @@ BERT_MLM_fine-tuning.ipynb
 SemEval_2020_subtask_2.ipynb
 
 ### Data files
-word-lists/old
+data/word-lists/old
 data/
 *.pickle

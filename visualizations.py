@@ -1,36 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+from config import SLANG_COLOR, NONSLANG_COLOR, HYBRID_COLOR
 
-SLANG_COLOR="darkorange"
-NONSLANG_COLOR="mediumslateblue"
-
-class Label2Color:
-
-    def __init__(self):
-        self.NOISE = - 1
-        self.DEFAULT_COLOR = 'xkcd:dark teal'
-        self.color_dict = {
-            self.NOISE : 'grey',
-            0 : 'darkorange',
-            1 : 'mediumslateblue',
-            2 : 'gold',
-            3 : 'fuchsia',
-            5 : 'cyan',
-            6 : 'forestgreen',
-            7 : 'peru',
-            8 : 'skyblue',
-            9 : 'xkcd:amber',
-            10 : 'xkcd:candy pink',
-            11 : 'xkcd:sunny yellow'
-        }
-
-    def num2color(self, num):
-        if num in self.color_dict:
-            return self.color_dict[num]
-        else:
-            return self.DEFAULT_COLOR
-
+#-------------------- plots of UD (Urban Dictionary) --------------------#
 def plot_year_histogram(years, bin_num=10, color='mediumslateblue',
                         title="Distribution of years in which the definitions were posted"):
     fig, ax = plt.subplots(figsize=(4,1.7))
@@ -60,6 +33,32 @@ def plot_like_dislike_ratio(defs):
     plt.yscale('log')
     plt.ylabel("log of upvote/downvote ratio")
     plt.show()
+
+#-------------------- plots of representations & clusters-------------------#
+class Label2Color:
+    def __init__(self):
+        self.NOISE = - 1
+        self.DEFAULT_COLOR = 'xkcd:dark teal'
+        self.color_dict = {
+            self.NOISE : 'grey',
+            0 : 'darkorange',
+            1 : 'mediumslateblue',
+            2 : 'gold',
+            3 : 'fuchsia',
+            5 : 'cyan',
+            6 : 'forestgreen',
+            7 : 'peru',
+            8 : 'skyblue',
+            9 : 'xkcd:amber',
+            10 : 'xkcd:candy pink',
+            11 : 'xkcd:sunny yellow'
+        }
+
+    def num2color(self, num):
+        if num in self.color_dict:
+            return self.color_dict[num]
+        else:
+            return self.DEFAULT_COLOR
 
 def plot_PCA_tradeoff(target, pca_model, corpus1_reps, corpus2_reps):
     X1 = [elem.detach().numpy() for elem in corpus1_reps[target]]
@@ -217,27 +216,58 @@ def plot_old_vs_new(old_reps, new_reps, word):
     plt.title("word representations of " + word + " in 2d with PCA")
     plt.show()
 
-def plot_log_freqs_change(slang_freq_df, nonslang_freq_df):
-    plt.hist([[np.log(k) for k in slang_freq_df.freq.values],
-              [np.log(k) for k in nonslang_freq_df.freq.values]],
-             color=["darkorange","mediumslateblue"],
+#-------------------- plots for statistical comparison: slang/nonslang  ------------------#
+
+def plot_log_freqs(slang_freqs, nonslang_freqs, add_to_title=" in 2010"):
+    plt.hist([[np.log(k) for k in slang_freqs],
+              [np.log(k) for k in nonslang_freqs]],
+             color=[SLANG_COLOR, NONSLANG_COLOR],
              label=["slang","nonslang"])
     plt.xlabel("log of # occurrences in 24 hours")
     plt.legend()
-    plt.title("log-frequency of words in 2010")
+    plt.title("log-frequency of words"+add_to_title)
     plt.show()
 
+def plot_polysemy(slang_polysemy_df,nonslang_polysemy_df,hybrid_polysemy_df=None):
+    if hybrid_polysemy_df is not None:
+        plt.hist([slang_polysemy_df.polysemy,nonslang_polysemy_df.polysemy, hybrid_polysemy_df.polysemy],
+                 color=[SLANG_COLOR, NONSLANG_COLOR, HYBRID_COLOR],
+                 label=["slang", "nonslang", "hybrid"])
+        plt.legend()
+        plt.title("Number of Word Senses - Distribution")
+        plt.xlabel("# word senses")
+        plt.show()
+    else:
+        plt.hist([slang_polysemy_df.polysemy, nonslang_polysemy_df.polysemy],
+                 color=[SLANG_COLOR, NONSLANG_COLOR],
+                 label=["slang", "nonslang"])
+        plt.legend()
+        plt.title("Number of Word Senses - Distribution")
+        plt.xlabel("# word senses")
+        plt.show()
 
-if __name__ == '__main__':
-    import pickle5 as pickle
-    from sklearn.decomposition import PCA
-    oldpath = "/Users/alacrity/Documents/GitHub/slangvolution-semantic-change-main/old_slang_reps.pickle"
-    newpath = "/Users/alacrity/Documents/GitHub/slangvolution-semantic-change-main/new_slang_reps.pickle"
+def plot_3category_comparison(s_all_df, ns_all_df, h_all_df,
+                              col="log_diff",
+                              xlabel="log(2020 frequency/2010 frequency)",
+                              title="Frequency change between 2010 and 2020"):
+    plt.hist([s_all_df[col], ns_all_df[col], h_all_df[col]],
+             label=["slang", "nonslang", "hybrid"],
+             color=[SLANG_COLOR, NONSLANG_COLOR, HYBRID_COLOR],
+             bins=22)
+    plt.legend()
+    plt.xlabel(xlabel)
+    plt.title(title)
+    plt.show()
 
-    with open(oldpath, "rb") as f:
-        old_reps = pickle.load(f)
-
-    with open(newpath, "rb") as f:
-        new_reps = pickle.load(f)
-
-    plot_PCA_tradeoff(target="bromance", pca_model=PCA(), corpus1_reps=old_reps, corpus2_reps=new_reps)
+def plot_slang_nonslang_comparison(s_all_df, ns_all_df, curr_col="log_diff",
+                                   title="Frequency change between 2010 and 2020",
+                                   xlabel="log(2020 frequency/2010 frequency)",
+                                   bins=22):
+    plt.hist([s_all_df[curr_col], ns_all_df[curr_col]],
+             label=["slang", "nonslang"],
+             color=[SLANG_COLOR, NONSLANG_COLOR],
+             bins=bins)
+    plt.legend()
+    plt.xlabel(xlabel)
+    plt.title(title)
+    plt.show()

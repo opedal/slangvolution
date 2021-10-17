@@ -1,10 +1,13 @@
+"""
+Fine tuning the RoBERTa bi-directional language model
+on the Urban Dictionary (UD) data, to familiarise it with slang
+"""
 import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.optim.lr_scheduler import StepLR
 import argparse
-import transformers
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from transformers import AdamW
 from sklearn.model_selection import train_test_split
@@ -113,7 +116,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num-epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=1)
-    parser.add_argument("--data-path", type=str, default='data/filtered_100000_sampled.csv')
+    parser.add_argument("--data-path", type=str, default='data/UD_filtered_100000_sampled.csv')
     parser.add_argument("--small",type=bool, default=False)
     parser.add_argument("--maskp",type=float, default=0.15)
     parser.add_argument("--patience",type=int, default=3)
@@ -127,8 +130,8 @@ if __name__ == "__main__":
     # directories for saving models and results
     if not os.path.exists("models"):
         os.mkdir("models")
-    if not os.path.exists("losses"):
-        os.mkdir("losses")
+    if not os.path.exists("results/losses"):
+        os.mkdir("results/losses")
 
     np.random.seed(SEED)
     torch.manual_seed(SEED)
@@ -190,12 +193,12 @@ if __name__ == "__main__":
         if args.simplified_path: model_save_path = "models/roberta_UD"
         else: model_save_path = "models/roberta_UD_lr"+str(lr)+"_epochs"+str(args.num_epochs)
 
-        model.save_pretrained()
-        textfile = open("losses/model_lr"+str(lr)+"_epochs"+str(args.num_epochs)+"_train.txt", "w")
+        model.save_pretrained(save_directory=model_save_path)
+        textfile = open("results/losses/model_lr"+str(lr)+"_epochs"+str(args.num_epochs)+"_train.txt", "w")
         for elem in epoch_train_losses:
             textfile.write(str(elem) + "\n")
         textfile.close()
-        textfile = open("losses/model"+str(lr)+"_epochs"+str(args.num_epochs)+"_eval.txt", "w")
+        textfile = open("results/losses/model"+str(lr)+"_epochs"+str(args.num_epochs)+"_eval.txt", "w")
         for elem in epoch_eval_losses:
             textfile.write(str(elem) + "\n")
         textfile.close()
