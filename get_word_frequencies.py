@@ -8,23 +8,17 @@ import numpy as np
 import time
 
 from twitter_api import *
+import config
 
 if __name__ == '__main__':
     REQUEST_LIMIT = 300
+
     words_path = "data/word-lists/all_words_300.csv"
-    PATHS = {"slang2010":"freq_slang_counts_24h_2010.csv",
-             "slang2020": "freq_slang_counts_24h_2020.csv",
-             "nonslang2010":"freq_nonslang_counts_24h_2010.csv",
-             "nonslang2020":"freq_nonslang_counts_24h_2020.csv",
-             "both2010": "freq_hybrid_counts_24h_2010.csv",
-             "both2020": "freq_hybrid_counts_24h_2020.csv",
-             "sample2010": "freq_sample_words_24h_2010.csv",
-             "sample2020": "freq_sample_words_24h_2020.csv",
-             }
+    PATHS = config.FREQ_FILE_NAMES
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both","sample"}
     parser.add_argument("--year", type=int, default=2010)
-    parser.add_argument("--save-dir", type=str, default="../data/frequencies/")
+    parser.add_argument("--save-dir", type=str, default="data/frequencies/")
     parser.add_argument("--num-dates",type=int,default=40)
     args = parser.parse_args()
 

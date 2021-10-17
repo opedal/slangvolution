@@ -38,14 +38,14 @@ TWEET_FILE_NAMES = {'slang': {"old": "old_slang_tweets.pickle",
                            }
                     }
 
-FREQ_FILE_NAMES = {"slang 2020": 'freq_slang_counts_24h_2020.csv',
-              "slang 2010": 'freq_slang_counts_24h_2010.csv',
-              "nonslang 2020": 'freq_nonslang_counts_24h_2020.csv',
-              "nonslang 2010": 'freq_nonslang_counts_24h_2010.csv',
-              "sample 2020": 'freq_sample_words_24h_2020.csv',
-              "sample 2010": 'freq_sample_words_24h_2010.csv',
-              "hybrid 2010": "freq_hybrid_counts_24h_2010.csv",
-              "hybrid 2020": "freq_hybrid_counts_24h_2020.csv",
+FREQ_FILE_NAMES = {"slang2020": 'freq_slang_counts_24h_2020.csv',
+              "slang2010": 'freq_slang_counts_24h_2010.csv',
+              "nonslang2020": 'freq_nonslang_counts_24h_2020.csv',
+              "nonslang2010": 'freq_nonslang_counts_24h_2010.csv',
+              "sample2020": 'freq_sample_words_24h_2020.csv',
+              "sample2010": 'freq_sample_words_24h_2010.csv',
+              "hybrid2010": "freq_hybrid_counts_24h_2010.csv",
+              "hybrid2020": "freq_hybrid_counts_24h_2020.csv",
               }
 
 POLYSEMY_FILE_NAMES = {"slang": "polysemy_slang.csv",
