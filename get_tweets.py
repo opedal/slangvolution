@@ -1,4 +1,9 @@
-from tweet_retrieval import *
+import argparse
+import os
+import numpy as np
+import time
+
+from twitter_api import *
 
 if __name__ == "__main__":
 
@@ -21,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("--max-results",type=int,default=30)
     args = parser.parse_args()
 
-    words_list = get_words_list(word_type=args.type, words_path="../data/word-lists/all_words_300.csv")
+    words_list = get_words_list(word_type=args.type, words_path="data/word-lists/all_words_300.csv")
     save_dir = os.path.join(args.save_dir, PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
 

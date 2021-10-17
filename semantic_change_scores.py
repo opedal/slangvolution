@@ -11,10 +11,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # directory for results output
-    if not os.path.exists("results"):
-        os.mkdir("results")
+    if not os.path.exists("scripts/results"):
+        os.mkdir("scripts/results")
     print("--- Getting data ---")
-    target_words, old_reps, new_reps = get_data_for_semeval(reps=args.reps, reps_abs_path="../data/representations")
+    target_words, old_reps, new_reps = get_data_for_semeval(reps=args.reps, reps_abs_path="data/representations")
 
     print("--- Scoring ---")
     if args.method == "apd":

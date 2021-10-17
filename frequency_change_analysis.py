@@ -91,3 +91,6 @@ def print_average_frequencies():
           avgs["slang 2020"]/avgs["slang 2010"])
     print("the frequency of sample words between 2010 and 2020, increased times ",
           avgs["sample 2020"]/avgs["sample 2010"])
+
+if __name__ == '__main__':
+    get_freq_difference_stats(config.FREQ_FILE_NAMES)
