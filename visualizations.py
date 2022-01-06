@@ -271,3 +271,13 @@ def plot_slang_nonslang_comparison(s_all_df, ns_all_df, curr_col="log_diff",
     plt.xlabel(xlabel)
     plt.title(title)
     plt.show()
+
+if __name__ == '__main__':
+    import pandas as pd
+    from collections import Counter
+    polysemy_WN = pd.read_csv("data/polysemy/polysemy_nonslang.csv")
+    polysemy_MW = pd.read_csv("data/polysemy/polysemy_nonslang_MW.csv")
+    polysemy_MW.columns = ["idx", "word", "polysemy_MW"]
+    polysemy = pd.merge(polysemy_WN, polysemy_MW,on="word")
+    polysemy["poly_diff"] = polysemy["polysemy_MW"] - polysemy["polysemy"]
+    Counter(polysemy["poly_diff"])

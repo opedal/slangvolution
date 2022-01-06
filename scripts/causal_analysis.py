@@ -13,8 +13,8 @@ if __name__ == '__main__':
 
     causal_df = pd.read_csv("../data/causal_data_input.csv")
 
-    slang_freq_df = pd.read_csv(osp.join(freqs_folder_path, freq_file_names["slang 2010"]))
-    nonslang_freq_df = pd.read_csv(osp.join(freqs_folder_path, freq_file_names["nonslang 2010"]))
+    slang_freq_df = pd.read_csv(osp.join(freqs_folder_path, freq_file_names["slang2010"]))
+    nonslang_freq_df = pd.read_csv(osp.join(freqs_folder_path, freq_file_names["nonslang2010"]))
 
     print("Comparing 2010 Frequencies:")
     plot_log_freqs(slang_freqs=slang_freq_df.freq.values, nonslang_freqs=nonslang_freq_df.freq.values)

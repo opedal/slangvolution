@@ -52,3 +52,12 @@ POLYSEMY_FILE_NAMES = {"slang": "polysemy_slang.csv",
                        "nonslang": "polysemy_nonslang.csv",
                        "hybrid": "polysemy_hybrid.csv",
                        }
+
+TWEET_FOLDER_NAMES = {'slang': {"old": "tweets_old/slang_word_tweets",
+                              "new": "tweets_new/slang_word_tweets"
+                              },
+                    'nonslang': {
+                               "old": "tweets_old/nonslang_word_tweets",
+                               "new": "tweets_new/nonslang_word_tweets"
+                           }
+                      }

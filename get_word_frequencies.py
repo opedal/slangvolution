@@ -12,7 +12,6 @@ import config
 
 if __name__ == '__main__':
     REQUEST_LIMIT = 300
-
     words_path = "data/word-lists/all_words_300.csv"
     PATHS = config.FREQ_FILE_NAMES
     parser = argparse.ArgumentParser()

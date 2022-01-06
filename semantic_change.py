@@ -127,7 +127,7 @@ def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets, do_pca=T
         # scores["APD Canberra"] = compute_average_pairwise_difference(X1, X2, dist="canberra")
         # scores["APD Combined Manhattan"] = compute_average_pairwise_difference(X1, X2, dist="combined3a")
         # scores["APD Combined Canberra"] = compute_average_pairwise_difference(X1, X2, dist="combined3b")
-        scores["APD Combined All 4"] = compute_average_pairwise_difference(X1, X2, dist="combined4")
+        #scores["APD Combined All 4"] = compute_average_pairwise_difference(X1, X2, dist="combined4")
         for dim in [2, 5, 10, 20, 50, 100]:
             if do_pca:
                 X_reduced = apply_PCA(X, dim)
@@ -143,9 +143,9 @@ def get_APD_semantic_change_scores(corpus1_reps, corpus2_reps, targets, do_pca=T
                 # scores[f"APD Combined Canberra pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
                 #                                                                                   X_reduced[len(X1):],
                 #                                                                                   dist="combined3b")
-                scores[f"APD Combined All 4 pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                                                  X_reduced[len(X1):],
-                                                                                                  dist="combined4")
+                #scores[f"APD Combined All 4 pca{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
+                #                                                                                  X_reduced[len(X1):],
+                #                                                                                  dist="combined4")
             if do_umap:
                 X_reduced = apply_UMAP(X, dim)
                 scores[f"APD Manhattan umap{dim}"] = compute_average_pairwise_difference(X_reduced[:len(X1)],
@@ -199,7 +199,7 @@ def get_APD_scores(corpus1_reps, corpus2_reps, targets, dim=100, min_tweets=150)
                                                                           dist="combined2"))
     return scores
 
-def inner_APD_scores(corpus_reps, targets, dim=100, MIN_TWEETS=50):
+def inner_APD_scores(corpus_reps, targets, dim=100, min_tweets=50):
     """
     Compute APD within the same corpus
     """
@@ -215,7 +215,7 @@ def inner_APD_scores(corpus_reps, targets, dim=100, MIN_TWEETS=50):
         X1 = [elem.detach().numpy() for elem in corpus_reps[target]]
         X1 = np.array(X1)
         n = X1.shape[0]
-        if (n/2) <= MIN_TWEETS:
+        if (n/2) <= min_tweets:
             continue
         idxs = np.random.choice(n, int(n/2))
         other_idxs = [k for k in range(n) if k not in idxs]
