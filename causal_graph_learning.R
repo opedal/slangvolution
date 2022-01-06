@@ -7,11 +7,16 @@ library(ggpubr)
 
 #install.packages("Rfast2", type="binary")
 
-data <- read.csv("word-lists/causal_data_input.csv")
+data <- read.csv("word-lists/causal_data_input_pos4_binary.csv")
 head(data)
 
 # make factor variable binary
 data$type <- as.factor(data$type)
+data$Noun_binary <- as.factor(data$Noun_binary)
+data$Verb_binary <- as.factor(data$Verb_binary)
+data$Adj_binary <- as.factor(data$Adj_binary)
+data$Adverb_binary <- as.factor(data$Adverb_binary)
+data$most_common <- as.factor(data$most_common)
 #data$polysemy <- as.double(data$polysemy)
 #data$polysemy[data$polysemy >= 10] <- 10
 #data$polysemy <- factor(data$polysemy, ordered = TRUE)
@@ -23,8 +28,8 @@ data$meanfreq <- (data$freq2010+data$freq2020)/2
 data$meanfreqlog <- log(data$meanfreq)
 
 
-t1<- 2
-t2 <- 15
+t1<- 3
+t2 <- 5
 data$polysemy.cat <- 0
 data$polysemy.cat[data$polysemy == 1] <- "one"
 data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
@@ -32,7 +37,7 @@ data$polysemy.cat[(data$polysemy <= t2) & (data$polysemy > t1)] <- "more"
 data$polysemy.cat[data$polysemy > t2] <- "many"
 data$polysemy.cat <- as.factor(data$polysemy.cat)
 
-t1 <- 5
+t1 <- 10
 data$polysemy.cat <- 0
 data$polysemy.cat[data$polysemy == 1] <- "one"
 data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
@@ -70,8 +75,17 @@ data %>%
 data %>%
   select(meanfreqlog, logfreqchange, semantic_change, 
          polysemy.cat, type) -> data.relativelog.cat
+
+data %>%
+  select(meanfreqlog, logfreqchange, semantic_change, 
+         polysemy.cat, type, Noun_binary, Verb_binary, 
+         Adj_binary, Adverb_binary) -> data.pos
+
+data %>%
+  select(meanfreqlog, logfreqchange, semantic_change, 
+         polysemy.cat, type, most_common) -> data.pos.mostcommon
   
-data.matrix <- as.matrix(data.relativelog)
+data.matrix <- as.matrix(data.pos)
 
 testIndOrdinal(factor(data.matrix[,6], ordered=TRUE), 
                dataset = data.matrix, xIndex=3, csIndex=0)
@@ -100,13 +114,16 @@ ci.test(x="polysemy", y="meanfreqlog", data = data.relativelog, test="mc-mi-g")
 #cor, mc-cor, smc-cor, zf, mc-zf, smc-zf, mi-g, mc-mi-g, smc-mi-g, mi-g-sh
 #mi-cg
 
-res <- pc.stable(data.relativelog.cat, alpha = 0.05)
+res <- pc.stable(data.pos, alpha = 0.05)
 plot(res)
 
-res <- pc.stable(data.relativelog.cat, alpha = 0.01)
+res <- pc.stable(data.pos, alpha = 0.03)
 plot(res)
 
-res <- pc.stable(data.relativelog, test="jt,mi")
+res <- pc.stable(data.pos, alpha = 0.01)
+plot(res)
+
+res <- pc.stable(data.pos, test="jt,mi")
 plot(res)
 
 res <- gs(data.relativelog.cat)
