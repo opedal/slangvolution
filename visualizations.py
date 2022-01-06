@@ -290,7 +290,7 @@ if __name__ == '__main__':
 
 
     import pandas as pd
-    data = pd.read_csv("word-lists/causal_data_input_pos4_binary.csv")
+    data = pd.read_csv("data/causal_data_input_pos4_binary.csv")
     data["normalized_semantic_change"] = normalize_values(data["semantic_change"])
     data["log_diff"] = np.log(data["freq2020"]/data["freq2010"])
     data_slang = data[data["type"] == "slang"]
