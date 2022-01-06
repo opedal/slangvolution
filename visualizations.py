@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
+#import seaborn as sns
 from config import SLANG_COLOR, NONSLANG_COLOR, HYBRID_COLOR
 
 #-------------------- plots of UD (Urban Dictionary) --------------------#
@@ -272,6 +272,12 @@ def plot_slang_nonslang_comparison(s_all_df, ns_all_df, curr_col="log_diff",
     plt.title(title)
     plt.show()
 
+def normalize_values(non_normalized):
+    '''
+    For histogram over the semantic change scores
+    '''
+    return (non_normalized - np.min(non_normalized))/(np.max(non_normalized) - np.min(non_normalized))
+
 if __name__ == '__main__':
     import pandas as pd
     from collections import Counter
@@ -281,3 +287,14 @@ if __name__ == '__main__':
     polysemy = pd.merge(polysemy_WN, polysemy_MW,on="word")
     polysemy["poly_diff"] = polysemy["polysemy_MW"] - polysemy["polysemy"]
     Counter(polysemy["poly_diff"])
+
+
+    import pandas as pd
+    data = pd.read_csv("word-lists/causal_data_input_pos4_binary.csv")
+    data["normalized_semantic_change"] = normalize_values(data["semantic_change"])
+    data["log_diff"] = np.log(data["freq2020"]/data["freq2010"])
+    data_slang = data[data["type"] == "slang"]
+    data_nonslang = data[data["type"] == "nonslang"]
+    plot_slang_nonslang_comparison(data_slang, data_nonslang, "normalized_semantic_change",
+                                   title="Semantic change between 2010 and 2020",
+                                   xlabel="Normalized semantic change score")
