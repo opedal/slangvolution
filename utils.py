@@ -57,3 +57,9 @@ def perm_test(slang_APD, nonslang_APD):
 
     p_val = len(np.where(random_diffs >= true_diff)[0]) / permutation_num
     return p_val
+
+def normalize_values(non_normalized):
+    '''
+    For histogram over the semantic change scores
+    '''
+    return (non_normalized - np.min(non_normalized))/(np.max(non_normalized) - np.min(non_normalized))

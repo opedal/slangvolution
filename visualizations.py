@@ -272,15 +272,10 @@ def plot_slang_nonslang_comparison(s_all_df, ns_all_df, curr_col="log_diff",
     plt.title(title)
     plt.show()
 
-def normalize_values(non_normalized):
-    '''
-    For histogram over the semantic change scores
-    '''
-    return (non_normalized - np.min(non_normalized))/(np.max(non_normalized) - np.min(non_normalized))
-
 if __name__ == '__main__':
     import pandas as pd
     from collections import Counter
+    from utils import normalize_values
     polysemy_WN = pd.read_csv("data/polysemy/polysemy_nonslang.csv")
     polysemy_MW = pd.read_csv("data/polysemy/polysemy_nonslang_MW.csv")
     polysemy_MW.columns = ["idx", "word", "polysemy_MW"]

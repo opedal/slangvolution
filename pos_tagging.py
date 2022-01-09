@@ -84,6 +84,22 @@ def save_pos_tags():
                 # except:
                 #     print("couldn't get tweet pos for",curr_word)
 
+def count_tweets_per_word():
+    tweets_per_word = {}
+    for time in ["old", "new"]:
+        tweets_per_word[time] = {}
+        for type in ["slang","nonslang"]:
+            tweets_folder = osp.join(TWEET_PATH, TWEET_FOLDER_NAMES[type][time])
+            print("getting tweets from", tweets_folder)
+            for tweets_file in sorted(os.listdir(tweets_folder)):
+                tweets = pd.read_csv(osp.join(tweets_folder, tweets_file))
+                if len(tweets) == 0:
+                    continue
+                curr_word = tweets.word[0].lower()
+                num_tweets = len(tweets["text"])
+                tweets_per_word[time][curr_word] = num_tweets
+    return tweets_per_word
+
 def analyse_pos_tags():
     causal_data = pd.read_csv("data/causal_data_input.csv")
     pos_accross_types = { }
@@ -100,7 +116,18 @@ def analyse_pos_tags():
             pos_accross_types[type + "_" + time] = most_common
     print(pos_accross_types)
 
-def prep_for_causal():
+def sum_pos(x, min=10):
+    """
+    Sum the number of times a pos tag was given in 2010, encoded by x[0]
+     with the number of times it was given in 2020, encoded by x[1]
+    Only consider the tag if it appeared more than min times in both periods
+    If it hadn't appeared at least min times in either period, return 0
+    """
+    pos_tag_sum = x[0] + x[1]
+    has_appeared_min_times = ((x[0]>min) and (x[1]>min))
+    return pos_tag_sum*int(has_appeared_min_times)
+
+def prep_for_causal(tweets_per_word):
     pos_tags = {"old": {}, "new": {}}
     for word_type in ["slang", "nonslang"]:
         for time in ["old", "new"]:
@@ -115,27 +142,42 @@ def prep_for_causal():
     df_new_nonslang = pos_tags["new"]["nonslang"]
 
     df_slang = pd.merge(df_new_slang, df_old_slang, on="word")
+
     POS = ["Noun", "Verb", "Adverb", "Adj"]
     for pos in POS:
         df_slang[pos] = df_slang[pos + "_x"] + df_slang[pos + "_y"]
+        #df_slang[pos] = df_slang[[pos + "_x", pos + "_y"]].apply(sum_pos, axis=1)
     df_slang['most_common'] = df_slang[POS].idxmax(axis=1)
 
     df_nonslang = pd.merge(df_new_nonslang, df_old_nonslang, on="word")
     for pos in POS:
         df_nonslang[pos] = df_nonslang[pos + "_x"] + df_nonslang[pos + "_y"]
+        #df_nonslang[pos] = df_nonslang[[pos + "_x", pos + "_y"]].apply(sum_pos, axis=1)
     df_nonslang['most_common'] = df_nonslang[POS].idxmax(axis=1)
-    df_all = pd.concat([df_slang, df_nonslang])
 
-    MIN = 5
+    df_all = pd.concat([df_slang, df_nonslang])
+    df_all["num_tweets"] = df_all["word"].apply(
+                            lambda wrd: tweets_per_word["old"][wrd] + tweets_per_word["new"][wrd])
+    MIN = 10
     for pos in POS:
-        df_all[pos+"_binary"] = df_all[pos].apply(lambda x: int(x > MIN))
+        df_all[pos+"_binary"] = df_all[[pos,"num_tweets"]].apply(lambda x: int(x[0] > (MIN/100)*x[1]), axis=1)
     return df_all
 
 if __name__ == '__main__':
-    df_all = prep_for_causal()
-    causal_data = pd.read_csv("data/causal_data_input.csv")
-    df_causal = pd.merge(causal_data,
-                         df_all[["word", "most_common", "Noun_binary", "Verb_binary", "Adj_binary", "Adverb_binary"]],
+    tweets_per_word = count_tweets_per_word()
+    df_all = prep_for_causal(tweets_per_word)
+    causal_data = pd.read_csv("data/causal_data_MW_pos4binary.csv")
+    causal_df = causal_data[['word', 'freq2010', 'freq2020', 'type', 'semantic_change', 'polysemy']]
+    df_causal = pd.merge(causal_df,
+                         df_all[["word", "most_common", "Noun_binary",
+                                 "Verb_binary", "Adj_binary", "Adverb_binary"]],
                          on="word")
-    df_causal.to_csv("data/causal_data_input_pos4_binary.csv")
-    analyse_pos_tags()
+
+    df_causal.to_csv("data/causal_data_input_pos4_binary_min10pc.csv")
+
+    causal_data = pd.read_csv("data/causal_data_input.csv")
+    # df_causal = pd.merge(causal_data,
+    #                      df_all[["word", "most_common", "Noun_binary", "Verb_binary", "Adj_binary", "Adverb_binary"]],
+    #                      on="word")
+    # df_causal.to_csv("data/causal_data_input_pos4_binary_min10t.csv")
+    # analyse_pos_tags()
