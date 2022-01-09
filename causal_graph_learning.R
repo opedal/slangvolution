@@ -11,8 +11,8 @@ cor(x, y, method = c("pearson", "kendall", "spearman"))
 #TODO: log transform for frequencies
 
 #data <- read.csv("data/causal_data_input_pos.csv")
-data  <- read.csv("/Users/alacrity/Documents/GitHub/kg_bias_detection/slangvolution-semantic-change/data/causal_data_input_pos4_binary.csv")
-data  <- read.csv("/Users/alacrity/Documents/GitHub/kg_bias_detection/slangvolution-semantic-change/data/causal_data_MW_pos4binary.csv")
+#data  <- read.csv("/Users/alacrity/Documents/GitHub/kg_bias_detection/slangvolution-semantic-change/data/causal_data_input_pos4_binary.csv")
+#data  <- read.csv("/Users/alacrity/Documents/GitHub/kg_bias_detection/slangvolution-semantic-change/data/causal_data_MW_pos4binary.csv")
 data <- read.csv("word-lists/causal_data_input_pos4_binary.csv")
 
 head(data)
@@ -62,17 +62,18 @@ data$polysemy.cat <- as.factor(data$polysemy.cat)
 data$pos = as.factor(data$most_common)
 
 ## Perform gaussian test
-ggdensity(data$meanfreqlog, main="Log mean frequency")
-ggdensity(data$meanfreq, main="Mean frequency") # not normal
-ggdensity(data$logfreqchange, main="Log frequency change")
-ggdensity(data$semantic_change, main="Semantic change score")
-ggdensity(data$polysemy, main="Polysemy") # not normal
-ggdensity(log(data$polysemy), main="Log Polysemy")
+ggdensity(data$meanfreqlog, xlab="Log frequency")
+ggdensity(data$meanfreq, xlab="Mean frequency") # not normal
+ggdensity(data$logfreqchange, xlab="Log frequency change")
+ggdensity(data$semantic_change, xlab ="Semantic change score")
+ggdensity(data$normalized_semantic_change, xlab="Normalized semantic change score")
+ggdensity(data$polysemy, xlab="Polysemy") # not normal
+ggdensity(log(data$polysemy), xlab="Log Polysemy")
 
-ggqqplot(data$meanfreqlog)
+ggqqplot(data$meanfreqlog, xlab="Log frequency")
 ggqqplot(data$meanfreq) # not normal
-ggqqplot(data$logfreqchange)
-ggqqplot(data$semantic_change)
+ggqqplot(data$logfreqchange, xlab="Log frequency change")
+ggqqplot(data$normalized_semantic_change, xlab="Normalized semantic change score")
 ggqqplot(data$polysemy) # not normal
 
 data %>%
