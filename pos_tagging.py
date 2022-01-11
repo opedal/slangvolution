@@ -127,7 +127,7 @@ def sum_pos(x, min=10):
     has_appeared_min_times = ((x[0]>min) and (x[1]>min))
     return pos_tag_sum*int(has_appeared_min_times)
 
-def prep_for_causal(tweets_per_word):
+def prep_for_causal(tweets_per_word, combine=True, minimum=10, percent=False):
     pos_tags = {"old": {}, "new": {}}
     for word_type in ["slang", "nonslang"]:
         for time in ["old", "new"]:
@@ -145,37 +145,50 @@ def prep_for_causal(tweets_per_word):
 
     POS = ["Noun", "Verb", "Adverb", "Adj"]
     for pos in POS:
-        df_slang[pos] = df_slang[pos + "_x"] + df_slang[pos + "_y"]
-        #df_slang[pos] = df_slang[[pos + "_x", pos + "_y"]].apply(sum_pos, axis=1)
+        if combine: df_slang[pos] = df_slang[pos + "_x"] + df_slang[pos + "_y"]
+        else: df_slang[pos] = df_slang[[pos + "_x", pos + "_y"]].apply(lambda x : sum_pos(x, minimum),
+                                                                       axis=1)
     df_slang['most_common'] = df_slang[POS].idxmax(axis=1)
-
     df_nonslang = pd.merge(df_new_nonslang, df_old_nonslang, on="word")
+
     for pos in POS:
-        df_nonslang[pos] = df_nonslang[pos + "_x"] + df_nonslang[pos + "_y"]
-        #df_nonslang[pos] = df_nonslang[[pos + "_x", pos + "_y"]].apply(sum_pos, axis=1)
+        if combine: df_nonslang[pos] = df_nonslang[pos + "_x"] + df_nonslang[pos + "_y"]
+        else: df_nonslang[pos] = df_nonslang[[pos + "_x", pos + "_y"]].apply(lambda x : sum_pos(x, minimum),
+                                                                             axis=1)
     df_nonslang['most_common'] = df_nonslang[POS].idxmax(axis=1)
 
     df_all = pd.concat([df_slang, df_nonslang])
     df_all["num_tweets"] = df_all["word"].apply(
                             lambda wrd: tweets_per_word["old"][wrd] + tweets_per_word["new"][wrd])
-    MIN = 10
+    if combine: MIN = minimum
+    else: MIN = 0
     for pos in POS:
-        df_all[pos+"_binary"] = df_all[[pos,"num_tweets"]].apply(lambda x: int(x[0] > (MIN/100)*x[1]), axis=1)
+        if percent:
+            df_all[pos+"_binary"] = df_all[[pos,"num_tweets"]].apply(
+                                            lambda x: int(x[0] > (MIN/100)*x[1]), axis=1)
+        else: df_all[pos + "_binary"] = df_all[pos].apply(lambda x: x > MIN)
     return df_all
 
 if __name__ == '__main__':
+    COMBINED = True
+    MIN = 5
+    PERCENT = True
+    to_str = {True:"combined", False: "sep"}
+    pc_to_str = {False : "", True : "percent"}
+
     tweets_per_word = count_tweets_per_word()
-    df_all = prep_for_causal(tweets_per_word)
-    causal_data = pd.read_csv("data/causal_data_MW_pos4binary.csv")
-    causal_df = causal_data[['word', 'freq2010', 'freq2020', 'type', 'semantic_change', 'polysemy']]
+    df_all = prep_for_causal(tweets_per_word, combine=COMBINED, minimum=MIN, percent=PERCENT)
+    causal_MW = pd.read_csv("data/causal_data_MW.csv")
+    causal_df = causal_MW[['word', 'freq2010', 'freq2020', 'type', 'semantic_change', 'polysemy']]
     df_causal = pd.merge(causal_df,
                          df_all[["word", "most_common", "Noun_binary",
                                  "Verb_binary", "Adj_binary", "Adverb_binary"]],
                          on="word")
 
-    df_causal.to_csv("data/causal_data_input_pos4_binary_min10pc.csv")
+    df_causal.to_csv("data/causal_data_input_pos4_binary_min" + str(MIN) + to_str[COMBINED]
+                     + pc_to_str[PERCENT] + ".csv")
 
-    causal_data = pd.read_csv("data/causal_data_input.csv")
+    #causal_data = pd.read_csv("data/causal_data_input.csv")
     # df_causal = pd.merge(causal_data,
     #                      df_all[["word", "most_common", "Noun_binary", "Verb_binary", "Adj_binary", "Adverb_binary"]],
     #                      on="word")
