@@ -8,10 +8,10 @@ losses/
 **/.DS_Store
 __pycache__/
 .Rhistory
+data/
 
 ### notebooks
-BERT_MLM_fine-tuning.ipynb
-SemEval_2020_subtask_2.ipynb
+notebooks/
 
 ### Data files
 data/word-lists/old

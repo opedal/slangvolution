@@ -8,7 +8,7 @@ from collections import Counter
 # If you haven't yet, run these downloads:
 #nltk.download('punkt')
 #nltk.download('averaged_perceptron_tagger')
-TWEET_PATH = "/Users/alacrity/Documents/Side Projects/Slangvolution/data/tweets/"
+TWEET_PATH = ".../Slangvolution/data/tweets/"
 SAVE_PATH = "data/POS/"
 
 unify_pos = {"NN":"Noun", "NNS":"Noun", "NNP":"Noun",
@@ -169,28 +169,3 @@ def prep_for_causal(tweets_per_word, combine=True, minimum=10, percent=False):
         else: df_all[pos + "_binary"] = df_all[pos].apply(lambda x: x > MIN)
     return df_all
 
-if __name__ == '__main__':
-    COMBINED = True
-    MIN = 5
-    PERCENT = True
-    to_str = {True:"combined", False: "sep"}
-    pc_to_str = {False : "", True : "percent"}
-
-    tweets_per_word = count_tweets_per_word()
-    df_all = prep_for_causal(tweets_per_word, combine=COMBINED, minimum=MIN, percent=PERCENT)
-    causal_MW = pd.read_csv("data/causal_data_MW.csv")
-    causal_df = causal_MW[['word', 'freq2010', 'freq2020', 'type', 'semantic_change', 'polysemy']]
-    df_causal = pd.merge(causal_df,
-                         df_all[["word", "most_common", "Noun_binary",
-                                 "Verb_binary", "Adj_binary", "Adverb_binary"]],
-                         on="word")
-
-    df_causal.to_csv("data/causal_data_input_pos4_binary_min" + str(MIN) + to_str[COMBINED]
-                     + pc_to_str[PERCENT] + ".csv")
-
-    #causal_data = pd.read_csv("data/causal_data_input.csv")
-    # df_causal = pd.merge(causal_data,
-    #                      df_all[["word", "most_common", "Noun_binary", "Verb_binary", "Adj_binary", "Adverb_binary"]],
-    #                      on="word")
-    # df_causal.to_csv("data/causal_data_input_pos4_binary_min10t.csv")
-    # analyse_pos_tags()
