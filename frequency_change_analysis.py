@@ -104,4 +104,3 @@ if __name__ == '__main__':
     from visualizations import plot_log_freqs
     from utils import independence_tests
 
-    print("hi")

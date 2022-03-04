@@ -11,8 +11,8 @@ MIN_TWEETS_PER_WORD = 150
 
 #-------------------- Semantic Change --------------------#
 
-SEMEVAL_PATH = "/Users/alacrity/Documents/uni/CSNLP/project/semeval2020_ulscd_eng/truth/graded.txt"
-SEMEVAL_TARGETS_PATH = "/Users/alacrity/Documents/uni/CSNLP/project/semeval2020_ulscd_eng/targets.txt"
+SEMEVAL_PATH = ".../semeval2020_ulscd_eng/truth/graded.txt"
+SEMEVAL_TARGETS_PATH = ".../semeval2020_ulscd_eng/targets.txt"
 
 #-------------------- File Naming --------------------#
 
