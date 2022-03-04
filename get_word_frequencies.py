@@ -21,7 +21,7 @@ if __name__ == '__main__':
     parser.add_argument("--words", type=str, default="all_words.csv")
     args = parser.parse_args()
 
-    selected_words_df = pd.read_csv(args.words, sep=";")
+    selected_words_df = pd.read_csv(args.words)
     words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 
     freq_file_path = os.path.join(args.save_dir, PATHS[args.type + str(args.year)])

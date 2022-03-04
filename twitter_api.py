@@ -193,6 +193,6 @@ def approx_freq(word, year=2010, num_dates=40, hour_gap=6):
     return avg_count
 
 def get_words_list(word_type, words_path="data/word-lists/all_words_300.csv"):
-    selected_words_df = pd.read_csv(words_path, sep=";")
+    selected_words_df = pd.read_csv(words_path)
     words_list = list(selected_words_df[selected_words_df.type == word_type].word)
     return words_list
