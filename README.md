@@ -50,10 +50,10 @@ If you would like to experiment with different semantic change score metrics, yo
 
 ## Causal Analysis
 
-The input file for the causal analysis is readily available as `causal_data_input.csv`. 
+The input file for the causal analysis is readily available as `causal_data_input.csv`. The causal discovery algorithm is done in the R script `causal_graph_learning.R`. It follows three main steps. We first import and preprocess the data. This includes the categorizations of the polysemy variable as is discussed in the paper. We then plot density and qq-plots for our variables. Finally, we perform the causal analysis with PC-stable (for various alpha values), and visualize the resulting causal graph.
 
 ## Other
 
-Code for pos tagging is provided in `pos_tagging.py`.
+Code for pos tagging is provided in `pos_tagging.py`. You will find global config variables in `config.py`, helper functions in `utils.py` and visualization tools in `visualizations.py`.
 
 
