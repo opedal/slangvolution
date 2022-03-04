@@ -34,7 +34,9 @@ This will provide you with a filtered UD csv file, used for fine-tuning.
 
 With the data from the previous step, run `python MLM_fine_tuning.py` to retrieve four models (with different learning rates). We recommend doing this remotely on a GPU (it takes a couple of days), but if you just wanna make sure that the code runs &mdash; add `--small True` and set the number of epochs to be small `--num-epochs 1`.
 
-Then, apply RoBERTa to the tweets to get the representations: `representations_retrieval.py --type slang`
+Then, apply RoBERTa to the tweets to get the representations: `representations_retrieval.py --type slang`. By default this will give you the summed representations across layers. Provide the data path to the old/new slang/nonslang/hybrid tweets with `--data-path data/tweets_new/slang_word_tweets`. The script will write two files, one for the representations and one for the tweet texts.
+
+You may also get the representations for the SemEval 2020 Task 1 data with the same script, by adding `--sem-eval True`. Download the data from [here](https://www.ims.uni-stuttgart.de/en/research/resources/corpora/sem-eval-ulscd-eng/).
 
 ## Semantic Change and Frequency Shift Scores
 
