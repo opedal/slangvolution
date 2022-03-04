@@ -9,6 +9,7 @@ losses/
 __pycache__/
 .Rhistory
 data/
+scripts/
 
 ### notebooks
 notebooks/
