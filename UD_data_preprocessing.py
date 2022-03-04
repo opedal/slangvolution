@@ -1,5 +1,5 @@
 """
-Script for filtering the Uraban Dictionary data to get 100000 definitions out of the original 3534966
+Script for filtering the Urban Dictionary data to get 100000 definitions out of the original 3534966
 Filtering according to
 - upvote/downvote ratio
 - number of upovotes
