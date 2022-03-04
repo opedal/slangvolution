@@ -24,9 +24,10 @@ if __name__ == "__main__":
     parser.add_argument("--hour-gap",type=int,default=48)
     parser.add_argument("--num-dates",type=int,default=20)
     parser.add_argument("--max-results",type=int,default=30)
+    parser.add_argument("--words", type=str, default="all_words.csv")
     args = parser.parse_args()
 
-    words_list = get_words_list(word_type=args.type, words_path="data/word-lists/all_words_300.csv")
+    words_list = get_words_list(word_type=args.type, words_path=args.words)
     save_dir = os.path.join(args.save_dir, PATHS[args.year], PATHS[args.type])
     print("saving tweets under", save_dir)
 

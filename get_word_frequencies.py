@@ -12,16 +12,16 @@ import config
 
 if __name__ == '__main__':
     REQUEST_LIMIT = 300
-    words_path = "data/word-lists/all_words_300.csv"
     PATHS = config.FREQ_FILE_NAMES
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="slang") #{"slang","nonslang","both","sample"}
     parser.add_argument("--year", type=int, default=2010)
     parser.add_argument("--save-dir", type=str, default="data/frequencies/")
     parser.add_argument("--num-dates",type=int,default=40)
+    parser.add_argument("--words", type=str, default="all_words.csv")
     args = parser.parse_args()
 
-    selected_words_df = pd.read_csv(words_path)
+    selected_words_df = pd.read_csv(args.words, sep=";")
     words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 
     freq_file_path = os.path.join(args.save_dir, PATHS[args.type + str(args.year)])
