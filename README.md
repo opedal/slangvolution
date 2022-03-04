@@ -1,5 +1,5 @@
 # Slangvolution
-Git repo for the paper [**Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang**](https://arxiv.org/), published as a main conference paper at ACL 2022. This README will walk you through the code and how to reproduce our results. 
+Repo for the paper [**Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang**](https://arxiv.org/), published as a main conference paper at ACL 2022. This README will walk you through the code and how to reproduce our results. 
 
 Start by installing all libraries:
 
@@ -34,7 +34,7 @@ This will provide you with a filtered UD csv file, used for fine-tuning.
 
 With the data from the previous step, run `python MLM_fine_tuning.py` to retrieve four models (with different learning rates). We recommend doing this remotely on a GPU (it takes a couple of days), but if you just wanna make sure that the code runs &mdash; add `--small True` and set the number of epochs to be small `--num-epochs 1`.
 
-Then, apply RoBERTa to the tweets to get the representations: `representations_retrieval.py --type slang`. By default this will give you the summed representations across layers. Provide the data path to the old/new slang/nonslang/hybrid tweets with `--data-path data/tweets_new/slang_word_tweets`. The script will write two files, one for the representations and one for the tweet texts.
+Then, apply RoBERTa to the tweets to get the representations: `representations_retrieval.py --type slang`. By default this will give you the summed representations across layers. Provide the data path to the old/new slang/nonslang/hybrid tweets with `--data-path data/tweets_new/slang_word_tweets`. The script will write two files, one for the representations and one for the tweet texts. Feel free to reach out to us for access to these files. 
 
 You may also get the representations for the SemEval 2020 Task 1 data with the same script, by adding `--sem-eval True`. Download the data from [here](https://www.ims.uni-stuttgart.de/en/research/resources/corpora/sem-eval-ulscd-eng/).
 
@@ -42,10 +42,18 @@ You may also get the representations for the SemEval 2020 Task 1 data with the s
 
 To get the APD scores on representations reduced to 100 dimensions with PCA run:
 
-`get_semantic_change_scores.py --method apd --reduction pca`
+`get_semantic_change_scores.py --method apd --reduction pca --type slang`
 
-Once the frequencies are saved, run 
+If you would like to experiment with different semantic change score metrics, you will find the relevant code in `semantic_change.py`.
 
-`frequency_change_analysis.py`
+**[TODO: FIX] Once the frequencies are saved, run `frequency_change_analysis.py` to save dataframes with the frequency change statistics for each word type**
 
-To save dataframes with the frequency change statistics for each word type 
+## Causal Analysis
+
+The input file for the causal analysis is readily available as `causal_data_input.csv`. 
+
+## Other
+
+Code for pos tagging is provided in `pos_tagging.py`.
+
+
