@@ -216,6 +216,7 @@ if __name__ == '__main__':
     parser.add_argument("--type", type=str, default="slang") #["slang","nonslang","both",[CUSTOM_LIST]]
     parser.add_argument("--semeval-path", type=str, default='data/semeval2020_ulscd_eng')
     parser.add_argument("--model-path",type=str,default="models/roberta_UD")
+    parser.add_argument("--words", type=str, default="all_words.csv")
     args = parser.parse_args()
 
     if args.sem_eval:
@@ -249,7 +250,7 @@ if __name__ == '__main__':
 
         if args.type in ["slang","nonslang","both"]:
 
-            words_path = "data/word-lists/all_words_300.csv"
+            words_path = args.words
             selected_words_df = pd.read_csv(words_path)
             words_list = list(selected_words_df[selected_words_df.type == args.type].word)
 

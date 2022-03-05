@@ -1,5 +1,5 @@
 """
-Script for filtering the Uraban Dictionary data to get 100000 definitions out of the original 3534966
+Script for filtering the Urban Dictionary data to get 100000 definitions out of the original 3534966
 Filtering according to
 - upvote/downvote ratio
 - number of upovotes
@@ -42,7 +42,7 @@ def defs_to_pandas(fpath):
     defs_df["num_likes"] = defs_df.num_likes.apply(str_to_int)
     defs_df["num_dislikes"] = defs_df.num_dislikes.apply(str_to_int)
     #defs_df["timestamp_date"] = defs_df.timestamp.apply(timestamp_to_date)
-    defs_df.to_csv("defs.csv")
+    defs_df.to_csv("data/defs.csv")
     return defs_df
 
 def process_date(date_string):
@@ -88,6 +88,6 @@ if __name__ == '__main__':
     parser.add_argument("--min-ratio", type=int, default=2)
     parser.add_argument("--sample", type=int, default=100000)
     args = parser.parse_args()
-    fpath = "data/all_definitions.dat"
+    fpath = args.path
     defs = defs_to_pandas(fpath)
     filter_sample_and_write(defs, args.min_likes, args.min_ratio, name=args.name, sample_size=args.sample)

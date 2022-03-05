@@ -116,7 +116,7 @@ def get_tweet_count(json_response):
 
 def get_tweets_df(df_path):
     tweet_columns = ['word',
-                     'id',
+                     #'id',
                      'year',
                      'month',
                      'day',
@@ -128,7 +128,7 @@ def get_tweets_df(df_path):
         tweets_df = tweets_df.to_dict(orient='list')
     except FileNotFoundError:
         tweets_df = {'word': [],
-                     'id': [],
+                     #'id': [],
                      'year': [],
                      'month': [],
                      'day': [],
