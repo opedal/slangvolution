@@ -63,3 +63,4 @@ def normalize_values(non_normalized):
     For histogram over the semantic change scores
     '''
     return (non_normalized - np.min(non_normalized))/(np.max(non_normalized) - np.min(non_normalized))
+

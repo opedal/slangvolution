@@ -7,8 +7,6 @@ import os.path as osp
 
 # internal imports
 import config
-from config import YEARLY_FREQ_NORMALIZATION_CONSTANTS
-
 
 def divide_by_larger_freq(X, colname1="freq2020", colname2="freq2010"):
     x,y = X[colname1], X[colname2]
@@ -94,7 +92,6 @@ def print_average_frequencies():
     print("the frequency of sample words between 2010 and 2020, increased times ",
           avgs["sample 2020"]/avgs["sample 2010"])
 
-
 if __name__ == '__main__':
     causal_data = pd.read_csv("data/causal_data_input.csv")
     slang_words = sorted(causal_data.word[causal_data.type == "slang"])
@@ -104,6 +101,4 @@ if __name__ == '__main__':
     #for a, b in zip(slang_words, nonslang_words): print(a + " & " + b + " \\\\")
     s, ns, h = get_freq_difference_stats(config.FREQ_FILE_NAMES, save=False)
     ns = ns[~ns.word.isin(to_remove)]
-    from visualizations import plot_log_freqs
-    from utils import independence_tests
 

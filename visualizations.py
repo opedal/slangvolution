@@ -272,7 +272,7 @@ def plot_slang_nonslang_comparison(s_all_df, ns_all_df, curr_col="log_diff",
     plt.title(title)
     plt.show()
 
-def plot_all_yearly_freqs(freq_df, words, colors, title_addition=" of words"):
+def plot_yearly_freqs(freq_df, words, colors, title_addition=" of words"):
 
     for word,color in zip(words,colors):
         freq_norm = freq_df.freq_norm[freq_df.word == word]

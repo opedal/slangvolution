@@ -75,14 +75,11 @@ def save_pos_tags():
                 if len(tweets) == 0:
                     continue
                 curr_word = tweets.word[0].lower()
-                # try:
                 tweets["POS"] = tweets["text"].apply(lambda x : get_pos(x,word=curr_word))
                 tweets["POS_unified"] = tweets["POS"].apply(get_unified_pos)
                 word_pos_counter = Counter(tweets.POS_unified)
                 top_pos_df = update_top_pos_df(top_pos_df=top_pos_df,curr_word=curr_word,word_pos_counter=word_pos_counter,save_path=save_path)
                 pos_df = update_pos_df(pos_df=pos_df,curr_word=curr_word,word_pos_counter=word_pos_counter, save_path=save_path)
-                # except:
-                #     print("couldn't get tweet pos for",curr_word)
 
 def count_tweets_per_word():
     tweets_per_word = {}
