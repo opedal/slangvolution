@@ -92,6 +92,14 @@ def print_average_frequencies():
     print("the frequency of sample words between 2010 and 2020, increased times ",
           avgs["sample 2020"]/avgs["sample 2010"])
 
+def yearly_frequency_plots():
+    freq_file_path = osp.join(args.save_dir, "example_words.csv")
+    freq_df = pd.read_csv(freq_file_path)
+
+    freq_df["freq_norm"] = freq_df[["freq","year"]].apply(
+        lambda x : x["freq"]/NORMALIZATION_CONSTANTS[x["year"]],
+        axis=1)
+
 if __name__ == '__main__':
     causal_data = pd.read_csv("data/causal_data_input.csv")
     slang_words = sorted(causal_data.word[causal_data.type == "slang"])

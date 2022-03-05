@@ -164,8 +164,9 @@ def prep_for_causal(tweets_per_word, combine=True, minimum=10, percent=False):
     else: MIN = 0
     for pos in POS:
         if percent:
+            pc = MIN/100
             df_all[pos+"_binary"] = df_all[[pos,"num_tweets"]].apply(
-                                            lambda x: int(x[0] > (MIN/100)*x[1]), axis=1)
+                                            lambda x: int(x[0] > pc*x[1]), axis=1)
         else: df_all[pos + "_binary"] = df_all[pos].apply(lambda x: x > MIN)
     return df_all
 

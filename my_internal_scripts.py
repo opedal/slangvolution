@@ -20,7 +20,7 @@ def get_UD_data():
     # res_old_df = pd.DataFrame(res_old)
     # res_old_df.to_csv("semeval_APD_only2010.csv")
     #
-    # res_new = inner_APD_scores(old_reps, target_words)
+    res_new = inner_APD_scores(old_reps, target_words)
     # res_new_df = pd.DataFrame(res_new)
     # res_new_df.to_csv("semeval_APD_only2020.csv")
 

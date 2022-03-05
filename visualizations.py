@@ -272,6 +272,18 @@ def plot_slang_nonslang_comparison(s_all_df, ns_all_df, curr_col="log_diff",
     plt.title(title)
     plt.show()
 
+def plot_all_yearly_freqs(freq_df, words, colors, title_addition=" of words"):
+
+    for word,color in zip(words,colors):
+        freq_norm = freq_df.freq_norm[freq_df.word == word]
+        plt.plot(freq_df.year[freq_df.word == word], freq_norm / max(freq_norm),
+                 label=word,
+                 color=color)
+
+    plt.legend()
+    plt.title("Yearly relative frequency" + title_addition)
+    plt.show()
+
 if __name__ == '__main__':
     import pandas as pd
     from collections import Counter

@@ -118,34 +118,39 @@ def approx_freq(word, year=2010,num_dates=20, hour_gap=6):
     avg_count = total_count/T
     return avg_count
 
-def plot_yearly_freq_both():
-    # word = "duckface"
-    # freq_norm_word = freq_df.freq_norm[freq_df.word == word]
-    # plt.plot(freq_df.year[freq_df.word == word], freq_norm_word/max(freq_norm_word), label=word, color="darkorange")
+def plot_yearly_freq_both(freq_df):
+    from visualizations import SLANG_COLOR, NONSLANG_COLOR
+    word = "duckface"
+    freq_norm_word = freq_df.freq_norm[freq_df.word == word]
+    plt.plot(freq_df.year[freq_df.word == word], freq_norm_word/max(freq_norm_word),
+             label=word,
+             color=SLANG_COLOR)
 
     # celeb = "celebutante"
     # freq_norm_celeb = freq_df.freq_norm[freq_df.word == celeb]
     # plt.plot(freq_df.year[freq_df.word == celeb], freq_norm_celeb/ max(freq_norm_celeb), label=celeb,
     #          color="xkcd:coral")
 
-    word2 = "incel"
-    freq_norm_word2 = freq_df.freq_norm[freq_df.word == word2]
-    plt.plot(freq_df.year[freq_df.word == word2], freq_norm_word2 / max(freq_norm_word2), label=word2,
-             color="xkcd:auburn")
+    # word2 = "incel"
+    # freq_norm_word2 = freq_df.freq_norm[freq_df.word == word2]
+    # plt.plot(freq_df.year[freq_df.word == word2], freq_norm_word2 / max(freq_norm_word2), label=word2,
+    #          color="xkcd:auburn")
 
-    # word1 = "inclusive"
-    # freq_norm_word1 = freq_df.freq_norm[freq_df.word == word1]
-    # plt.plot(freq_df.year[freq_df.word == word1], freq_norm_word1/max(freq_norm_word1), label=word1, color="mediumslateblue")
+    word1 = "inclusive"
+    freq_norm_word1 = freq_df.freq_norm[freq_df.word == word1]
+    plt.plot(freq_df.year[freq_df.word == word1], freq_norm_word1/max(freq_norm_word1),
+             label=word1,
+             color=NONSLANG_COLOR)
 
     # unicorn = "unicorn"
     # freq_norm_unicorn = freq_df.freq_norm[freq_df.word == unicorn]
     # plt.plot(freq_df.year[freq_df.word == unicorn], freq_norm_unicorn / max(freq_norm_unicorn), label=unicorn,
     #          color="xkcd:azure")
 
-    word3 = "lawlessness"
-    freq_norm_word3 = freq_df.freq_norm[freq_df.word == word3]
-    plt.plot(freq_df.year[freq_df.word == word3], freq_norm_word3 / max(freq_norm_word3), label=word3,
-             color="xkcd:electric blue")
+    # word3 = "lawlessness"
+    # freq_norm_word3 = freq_df.freq_norm[freq_df.word == word3]
+    # plt.plot(freq_df.year[freq_df.word == word3], freq_norm_word3 / max(freq_norm_word3), label=word3,
+    #          color="xkcd:electric blue")
 
     # didot = "didot"
     # freq_norm_didot = freq_df.freq_norm[freq_df.word == didot]
@@ -158,9 +163,10 @@ def plot_yearly_freq_both():
     #          color="xkcd:light navy")
 
     plt.legend()
-    plt.title("Yearly relative frequency of the fastest increasing slang and nonslang words")
-    #plt.title("Yearly relative frequency of \"{}\",\"{}\" and \"{}\"".format(word, word1, word2))
-    plt.show()
+    #plt.title("Yearly relative frequency of the fastest increasing slang and nonslang words")
+    plt.title("Yearly relative frequency of \"{}\",\"{}\"".format(word, word1))
+    plt.savefig("duckface_inclusive_highres.png", dpi=300)
+    #plt.show()
 
 def plot_yearly_freq(freq_df, word="inclusive",word1=None):
     if word1 is None:
@@ -187,7 +193,6 @@ def plot_yearly_freq(freq_df, word="inclusive",word1=None):
     # plt.xlabel("year")
     # plt.title("Yearly frequency of \"{}\" and \"{}\"".format(word, word1), fontweight="bold")
     # plt.show()
-
 
 def plot_all_yearly_freqs():
 
@@ -226,6 +231,7 @@ def plot_all_yearly_freqs():
 
 if __name__ == '__main__':
     REQUEST_LIMIT = 300
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--type", type=str, default="example") #{"slang","nonslang","both"}
     parser.add_argument("--year", type=int, default=2010)
@@ -237,9 +243,12 @@ if __name__ == '__main__':
 
     freq_file_path = os.path.join(args.save_dir, "example_words.csv")
     freq_df = pd.read_csv(freq_file_path)
+
     freq_df["freq_norm"] = freq_df[["freq","year"]].apply(
         lambda x : x["freq"]/NORMALIZATION_CONSTANTS[x["year"]],
         axis=1)
+    plot_yearly_freq_both(freq_df)
+    plot_yearly_freq(freq_df, word="inclusive", word1="duckface")
     print("saving word frequencies under", freq_file_path)
     num_words_until_pause = np.ceil(REQUEST_LIMIT/args.num_dates)
     hour_gap=24
