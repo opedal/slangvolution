@@ -8,6 +8,18 @@ HYBRID_COLOR = "xkcd:bright sky blue"
 #-------------------- Tweet & Representation Retrieval --------------------#
 
 MIN_TWEETS_PER_WORD = 150
+YEARLY_FREQ_NORMALIZATION_CONSTANTS = {2010: 1,
+                           2011: 2,
+                           2012: 5,
+                           2013: 7,
+                           2014: 6.8,
+                           2015: 6.6,
+                           2016: 6.4,
+                           2017: 6.4,
+                           2018: 6.2,
+                           2019: 6.4,
+                           2020: 6.4
+                           }
 
 #-------------------- Semantic Change --------------------#
 

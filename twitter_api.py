@@ -36,8 +36,8 @@ def create_count_url(word,start_time,end_time, bucket="hour"):
     """
     Create url for retrieving the number of tweets containting a word
     """
-    start_time = "start_time="+start_time #2021-01-17T00:00:00Z"
-    end_time = "end_time="+end_time #2021-01-18T00:00:00Z"
+    start_time = "start_time="+start_time #format 2021-01-17T00:00:00Z"
+    end_time = "end_time="+end_time #format 2021-01-18T00:00:00Z"
     #max_results_str = "max_results="+str(max_results)
     query = word#"TwitterDev%20%5C%22search%20api%5C%22"
     granularity=""
