@@ -92,13 +92,4 @@ def print_average_frequencies():
     print("the frequency of sample words between 2010 and 2020, increased times ",
           avgs["sample 2020"]/avgs["sample 2010"])
 
-if __name__ == '__main__':
-    causal_data = pd.read_csv("data/causal_data_input.csv")
-    slang_words = sorted(causal_data.word[causal_data.type == "slang"])
-    nonslang_words = sorted(causal_data.word[causal_data.type == "nonslang"])
-    to_remove = ["legalist", "trampolining", "galavant", "telogen", "underpainting", "avoiders", "didot", "rufescent"]
-    nonslang_words = [k for k in nonslang_words if k not in to_remove]
-    #for a, b in zip(slang_words, nonslang_words): print(a + " & " + b + " \\\\")
-    s, ns, h = get_freq_difference_stats(config.FREQ_FILE_NAMES, save=False)
-    ns = ns[~ns.word.isin(to_remove)]
 
