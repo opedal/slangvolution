@@ -4,6 +4,12 @@ import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind
 from mlxtend.evaluate import permutation_test
+from pathlib import Path
+
+def make_sure_df_exists(freq_file_path):
+    if not Path(freq_file_path).is_file():
+        new_freq_file = pd.DataFrame({"freq":[],"word":[],"year":[],"type":[]})
+        new_freq_file.to_csv(freq_file_path)
 
 def apply_PCA(data, dim=50):
     pca_model = PCA(n_components=dim)

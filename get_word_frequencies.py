@@ -7,14 +7,10 @@ import os
 import numpy as np
 import time
 
+## Internal imports
 from twitter_api import *
 import config
-from pathlib import Path
-
-def make_sure_df_exists(freq_file_path):
-    if not Path(freq_file_path).is_file():
-        new_freq_file = pd.DataFrame({"freq":[],"word":[],"year":[],"type":[]})
-        new_freq_file.to_csv(freq_file_path)
+from utils import make_sure_df_exists
 
 if __name__ == '__main__':
     REQUEST_LIMIT = 300
