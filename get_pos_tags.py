@@ -1,5 +1,6 @@
 import pandas as pd
 import os.path as osp
+import argparse
 # If you haven't yet, run these downloads:
 #nltk.download('punkt')
 #nltk.download('averaged_perceptron_tagger')
@@ -7,9 +8,15 @@ import os.path as osp
 from pos_tagging import count_tweets_per_word, pos_for_causal, analyse_pos_tags
 
 if __name__ == '__main__':
-    TWEET_PATH="data/"
-    SAVE_PATH="data/POS/"
-    causal_data_path = "data/causal_data.csv"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--causal-data", type=str, default="data/causal_data.csv")
+    parser.add_argument("--tweets", type=str, default="data/")
+    parser.add_argument("--save-path", type=str, default="data/POS/")
+    args = parser.parse_args()
+
+    TWEET_PATH = args.tweets
+    SAVE_PATH = args.save_path
+    causal_data_path = args.causal_data
 
     # parameters for POS tagging
     PERCENT=True #use percent to determine the threshold
@@ -24,7 +31,7 @@ if __name__ == '__main__':
                                                             )))
 
     ## To merge the POS tags with the rest of the causal data
-    causal_data = pd.read_csv("data/causal_data.csv")
+    causal_data = pd.read_csv(causal_data_path)
     causal_df = causal_data[['word', 'freq2010', 'freq2020', 'type', 'semantic_change', 'polysemy']]
 
     df_causal = pd.merge(causal_df,
