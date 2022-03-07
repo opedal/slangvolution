@@ -20,7 +20,7 @@ if __name__ == '__main__':
     if args.sem_eval:
         target_words, old_reps, new_reps = get_data_for_semeval(reps=args.reps, reps_abs_path="data/representations")
     else:
-        old_reps, new_reps = get_data_for_tweets(type=args.type, path="data/")
+        old_reps, new_reps = get_data_for_tweets(type=args.type, path="data/representations/")
         words_path = args.words
         selected_words_df = pd.read_csv(words_path)
         target_words = list(selected_words_df[selected_words_df.type == args.type].word)
