@@ -71,5 +71,9 @@ TWEET_FOLDER_NAMES = {'slang': {"old": "tweets_old/slang_word_tweets",
                     'nonslang': {
                                "old": "tweets_old/nonslang_word_tweets",
                                "new": "tweets_new/nonslang_word_tweets"
-                           }
+                           },
+                    'hybrid': {
+                          "old": "tweets_old/hybrid_word_tweets",
+                          "new": "tweets_new/hybrid_word_tweets"
                       }
+                    }
