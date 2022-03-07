@@ -9,9 +9,7 @@ Start by installing all libraries:
 
 All the words used in this study are listed under `data/all_words.csv`.
 
-You will need an academic research track account on twitter to run the following. 
-
-To retrieve tweets, add your bearer token to `twitter_api.py`. Then run:
+To retrieve tweets, add your bearer token to `twitter_api.py` (you will need access to Twitter's API). Then run:
 
 `get_tweets.py --type slang --year 2020 --num-dates 40 --hour-gap 24 --max-results 50`
 
@@ -42,7 +40,7 @@ You may also get the representations for the SemEval 2020 Task 1 data with the s
 
 ## POS Tags 
 
-To get the POS tags from the tweets, run `python get_pos_tags.py`
+To get the POS tags from the tweets, run `python get_pos_tags.py`.
 
 ## Semantic Change and Frequency Shift Scores
 
