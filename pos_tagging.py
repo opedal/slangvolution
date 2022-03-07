@@ -5,11 +5,6 @@ from os import path as osp
 import pandas as pd
 from config import TWEET_FOLDER_NAMES
 from collections import Counter
-# If you haven't yet, run these downloads:
-#nltk.download('punkt')
-#nltk.download('averaged_perceptron_tagger')
-TWEET_PATH = ".../Slangvolution/data/tweets/"
-SAVE_PATH = "data/POS/"
 
 unify_pos = {"NN":"Noun", "NNS":"Noun", "NNP":"Noun",
              "VB":"Verb", "VBD":"Verb", "VBP":"Verb", "VBN":"Verb", "VBG":"Verb", "VBZ":"Verb",
@@ -58,7 +53,7 @@ def update_pos_df(pos_df, word_pos_counter, curr_word, save_path):
     curr_pos_df.to_csv(osp.join(save_path, "all_pos.csv"))
     return pos_df
 
-def save_pos_tags():
+def save_pos_tags(save_path, tweet_path):
     for type in ["slang","nonslang"]:
         for time in ["old","new"]:
             top_pos_df = {"word": [],
@@ -67,8 +62,8 @@ def save_pos_tags():
             pos_df = {"word": [], "Noun": [], "Verb": [], "Adverb": [], "Adj": [], "Det": [],
                       "Particle": [], "Num": [], "Symbol": [], "Foreign": [], "Conjunction": [],
                       }
-            save_path = osp.join(SAVE_PATH, time, type)
-            tweets_folder = osp.join(TWEET_PATH, TWEET_FOLDER_NAMES[type][time])
+            save_path = osp.join(save_path, time, type)
+            tweets_folder = osp.join(tweet_path, TWEET_FOLDER_NAMES[type][time])
             print("getting tweets from", tweets_folder)
             for tweets_file in sorted(os.listdir(tweets_folder)):
                 tweets = pd.read_csv(osp.join(tweets_folder, tweets_file))
@@ -81,12 +76,15 @@ def save_pos_tags():
                 top_pos_df = update_top_pos_df(top_pos_df=top_pos_df,curr_word=curr_word,word_pos_counter=word_pos_counter,save_path=save_path)
                 pos_df = update_pos_df(pos_df=pos_df,curr_word=curr_word,word_pos_counter=word_pos_counter, save_path=save_path)
 
-def count_tweets_per_word():
+def count_tweets_per_word(tweet_path):
+    """
+    Count how many tweets there are per word
+    """
     tweets_per_word = {}
     for time in ["old", "new"]:
-        tweets_per_word[time] = {}
-        for type in ["slang","nonslang"]:
-            tweets_folder = osp.join(TWEET_PATH, TWEET_FOLDER_NAMES[type][time])
+        tweets_per_word[time] = Counter()
+        for type in ["slang", "nonslang"]:
+            tweets_folder = osp.join(tweet_path, TWEET_FOLDER_NAMES[type][time])
             print("getting tweets from", tweets_folder)
             for tweets_file in sorted(os.listdir(tweets_folder)):
                 tweets = pd.read_csv(osp.join(tweets_folder, tweets_file))
@@ -97,16 +95,14 @@ def count_tweets_per_word():
                 tweets_per_word[time][curr_word] = num_tweets
     return tweets_per_word
 
-def analyse_pos_tags():
-    causal_data = pd.read_csv("data/causal_data_input.csv")
+def analyse_pos_tags(save_path, causal_data_path):
+    causal_data = pd.read_csv(causal_data_path)
     pos_accross_types = { }
-    #"slang_old" :{},"slang_new":{}, "nonslang_old":{}, "nonslang_new": {},
-
     for type in ["slang", "nonslang"]:
         words = causal_data.word[causal_data.type == type]
         print(len(words),type,"words")
         for time in ["old", "new"]:
-            df_folder_path = osp.join(SAVE_PATH, time, type)
+            df_folder_path = osp.join(save_path, time, type)
             df_file_path = osp.join(df_folder_path, "most_common_pos.csv")
             df = pd.read_csv(df_file_path)
             most_common = Counter(df.most_common_pos[df.word.isin(words)])
@@ -124,11 +120,11 @@ def sum_pos(x, min=10):
     has_appeared_min_times = ((x[0]>min) and (x[1]>min))
     return pos_tag_sum*int(has_appeared_min_times)
 
-def prep_for_causal(tweets_per_word, combine=True, minimum=10, percent=False):
+def pos_for_causal(tweets_per_word, save_path, combine=True, minimum=10, percent=False):
     pos_tags = {"old": {}, "new": {}}
     for word_type in ["slang", "nonslang"]:
         for time in ["old", "new"]:
-            df_folder_path = osp.join(SAVE_PATH, time, word_type)
+            df_folder_path = osp.join(save_path, time, word_type)
             df_file_path = osp.join(df_folder_path, "all_pos.csv")
             df = pd.read_csv(df_file_path)
             pos_tags[time][word_type] = df
@@ -166,4 +162,3 @@ def prep_for_causal(tweets_per_word, combine=True, minimum=10, percent=False):
                                             lambda x: int(x[0] > pc*x[1]), axis=1)
         else: df_all[pos + "_binary"] = df_all[pos].apply(lambda x: x > MIN)
     return df_all
-

@@ -276,9 +276,10 @@ def plot_yearly_freqs(freq_df, words, colors, title_addition=" of words"):
 
     for word,color in zip(words,colors):
         freq_norm = freq_df.freq_norm[freq_df.word == word]
-        plt.plot(freq_df.year[freq_df.word == word], freq_norm / max(freq_norm),
-                 label=word,
-                 color=color)
+        if freq_norm > 0:
+            plt.plot(freq_df.year[freq_df.word == word], freq_norm / max(freq_norm),
+                     label=word,
+                     color=color)
 
     plt.legend()
     plt.title("Yearly relative frequency" + title_addition)

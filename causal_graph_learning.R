@@ -5,10 +5,13 @@ library(gee)
 library(bnlearn)
 library(ggpubr)
 
-## Import and preprocess
-data <- read.csv("causal_data_input.csv")
+froot = "data/"
+
+## Import
+data  <- read.csv(paste(froot,"causal_data_input.csv", sep=""))
 head(data)
 
+## Preprocess
 data$type <- as.factor(data$type)
 data$Noun_binary <- as.factor(data$Noun_binary)
 data$Verb_binary <- as.factor(data$Verb_binary)
@@ -21,24 +24,6 @@ data$freq2010log <- log(data$freq2010)
 data$freq2020log <- log(data$freq2020)
 data$meanfreq <- (data$freq2010+data$freq2020)/2
 data$meanfreqlog <- log(data$meanfreq)
-
-
-t1<- 2
-t2 <- 5
-data$polysemy.cat <- 0
-data$polysemy.cat[data$polysemy == 1] <- "one"
-data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
-data$polysemy.cat[(data$polysemy <= t2) & (data$polysemy > t1)] <- "more"
-data$polysemy.cat[data$polysemy > t2] <- "many"
-data$polysemy.cat <- as.factor(data$polysemy.cat)
-
-t1 <- 2
-data$polysemy.cat <- 0
-data$polysemy.cat[data$polysemy == 1] <- "one"
-data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
-data$polysemy.cat[data$polysemy > t1] <- "many"
-data$polysemy.cat <- as.factor(data$polysemy.cat)
-data$pos = as.factor(data$most_common)
 
 ## Plot
 ggdensity(data$meanfreqlog, xlab="Log frequency")
@@ -84,6 +69,24 @@ testIndOrdinal(factor(data.matrix[,6], ordered=TRUE),
 #jt, mc-jt, smc-jt
 #cor, mc-cor, smc-cor, zf, mc-zf, smc-zf, mi-g, mc-mi-g, smc-mi-g, mi-g-sh
 #mi-cg
+
+t1<- 2
+t2 <- 5
+data$polysemy.cat <- 0
+data$polysemy.cat[data$polysemy == 1] <- "one"
+data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
+data$polysemy.cat[(data$polysemy <= t2) & (data$polysemy > t1)] <- "more"
+data$polysemy.cat[data$polysemy > t2] <- "many"
+data$polysemy.cat <- factor(data$polysemy.cat,ordered = TRUE, 
+                            levels = c("one", "few", "more", "many"))
+
+t1 <- 2
+data$polysemy.cat <- 0
+data$polysemy.cat[data$polysemy == 1] <- "one"
+data$polysemy.cat[(data$polysemy <= t1) & (data$polysemy > 1)] <- "few"
+data$polysemy.cat[data$polysemy > t1] <- "many"
+data$polysemy.cat <- factor(data$polysemy.cat,ordered = TRUE,
+                            levels = c("one", "few", "more", "many"))
 
 res <- pc.stable(data.causal, alpha=0.05)
 plot(res)

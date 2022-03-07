@@ -9,7 +9,7 @@ from os import path as osp
 
 #-------------------- Authentication & Connection to the API --------------------#
 
-BEARER_TOKEN = ""
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAL7hOgEAAAAAvM92PZSwVJ%2Ba%2BOD5Pgi4N298uTI%3DBBY7UCntIx9eXHBqGRjgjQcjoDFlMgFGJCjzd65uKISX8VFpwc"
 
 def auth():
     return BEARER_TOKEN

@@ -7,6 +7,7 @@ from twitter_api import *
 
 if __name__ == "__main__":
 
+    # request limit of the api
     REQUEST_LIMIT=50
 
     PATHS = {2010: "tweets_old",
