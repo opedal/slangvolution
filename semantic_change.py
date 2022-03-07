@@ -172,8 +172,8 @@ def get_APD_scores(corpus1_reps, corpus2_reps, targets, dim=100, min_tweets=150)
     """
     scores = {
         "word" : [],
-        "Euclidian_APD" : [],
-        "cosine_APD" : [],
+        #"Euclidian_APD" : [],
+        #"cosine_APD" : [],
         "combined_APD": [],
     }
     for target in tqdm(targets):
@@ -187,12 +187,12 @@ def get_APD_scores(corpus1_reps, corpus2_reps, targets, dim=100, min_tweets=150)
             continue
         scores["word"].append(target)
         X_reduced = apply_PCA(X, dim)
-        scores["Euclidian_APD"].append(
-            compute_average_pairwise_difference(X_reduced[:len(X1)],X_reduced[len(X1):]))
+        #scores["Euclidian_APD"].append(
+        #    compute_average_pairwise_difference(X_reduced[:len(X1)],X_reduced[len(X1):]))
 
-        scores["cosine_APD"].append(compute_average_pairwise_difference(X_reduced[:len(X1)],
-                                                                        X_reduced[len(X1):],
-                                                                        dist = "cosine"))
+        #scores["cosine_APD"].append(compute_average_pairwise_difference(X_reduced[:len(X1)],
+        #                                                                X_reduced[len(X1):],
+        #                                                                dist = "cosine"))
 
         scores["combined_APD"].append(compute_average_pairwise_difference(X_reduced[:len(X1)],
                                                                           X_reduced[len(X1):],

@@ -19,8 +19,8 @@ def merge_freq_dfs(freq2010, freq2020, NORMALIZING_CONSTANT=6.4):
     """
     Merge the frequency dataframes of 2010 & 2020, and compute various change statistics
     """
-    freq2010.columns = ['freq2010', 'word', 'year', 'type']
-    freq2020.columns = ['freq2020', 'word', 'year', 'type']
+    #freq2010.columns = ['freq2010', 'word', 'year', 'type']
+    #freq2020.columns = ['freq2020', 'word', 'year', 'type']
     all_freqs = pd.merge(freq2010, freq2020[['freq2020', 'word']], on="word", how="inner")
     all_freqs["freq2020_norm"] = all_freqs.freq2020.apply(lambda x: x / NORMALIZING_CONSTANT)
 
