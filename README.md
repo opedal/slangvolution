@@ -1,5 +1,5 @@
 # Slangvolution
-Repo for the paper [**Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang**](https://arxiv.org/), published as a main conference paper at ACL 2022. This README will walk you through the code and how to reproduce the results. 
+Repo for the paper [**Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang**](https://arxiv.org/abs/2203.04651), accepted for publication as a main conference paper at ACL 2022. This README will walk you through the code and how to reproduce the results. 
 
 Start by installing all libraries:
 
