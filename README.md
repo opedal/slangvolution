@@ -1,5 +1,25 @@
 # Slangvolution
-Repo for the paper [**Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang**](https://arxiv.org/abs/2203.04651), accepted for publication as a main conference paper at ACL 2022. This README will walk you through the code and how to reproduce the results. 
+Repo for the paper [**Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang**](https://aclanthology.org/2022.acl-long.101/), accepted for publication as a main conference paper at ACL 2022. This README will walk you through the code and how to reproduce the results.
+
+Please cite as
+
+`@inproceedings{keidar-etal-2022-slangvolution,
+    title = "Slangvolution: {A} Causal Analysis of Semantic Change and Frequency Dynamics in Slang",
+    author = "Keidar, Daphna  and
+      Opedal, Andreas  and
+      Jin, Zhijing  and
+      Sachan, Mrinmaya",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.acl-long.101",
+    doi = "10.18653/v1/2022.acl-long.101",
+    pages = "1422--1442",
+    abstract = "Languages are continuously undergoing changes, and the mechanisms that underlie these changes are still a matter of debate. In this work, we approach language evolution through the lens of causality in order to model not only how various distributional factors associate with language change, but how they causally affect it. In particular, we study slang, which is an informal language that is typically restricted to a specific group or social setting. We analyze the semantic change and frequency shift of slang words and compare them to those of standard, nonslang words. With causal discovery and causal inference techniques, we measure the effect that word type (slang/nonslang) has on both semantic change and frequency shift, as well as its relationship to frequency, polysemy and part of speech. Our analysis provides some new insights in the study of language change, e.g., we show that slang words undergo less semantic change but tend to have larger frequency shifts over time.",
+}`
+
 
 Start by installing all libraries:
 
