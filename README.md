@@ -53,7 +53,7 @@ If you would like to experiment with different semantic change score metrics, yo
 The code for the frequency shift scores is provided in `frequency_change_analysis.py`. 
 
 ## Causal Analysis
-The causal analysis requires a .csv file that includes all variables. Either reproduce all steps or reach out to us for access. The causal discovery algorithm is done in the R script `causal_graph_learning.R`. It follows three main steps. We first import and preprocess the data. This includes the categorizations of the polysemy variable as is discussed in the paper. We then plot density and qq-plots for our variables. Finally, we perform the causal analysis with PC-stable (for various alpha values), and visualize the resulting causal graph.
+The causal analysis requires a .csv file that includes all variables. This file can be reproduced by following the above steps. Additionally, we provide the file `data/causal_dataset.csv` which consists of all variables used for our analysis apart from POS. The POS tags can be achieved as described above. The causal discovery algorithm is done in the R script `causal_graph_learning.R`. It follows three main steps. We first import and preprocess the data. This includes the categorizations of the polysemy variable as is discussed in the paper. We then plot density and qq-plots for our variables. Finally, we perform the causal analysis with PC-stable (for various alpha values), and visualize the resulting causal graph.
 
 ## Other
 
