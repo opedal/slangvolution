@@ -1,10 +1,30 @@
 # Slangvolution
 Repo for the paper [**Slangvolution: A Causal Analysis of Semantic Change and Frequency Dynamics in Slang**](https://aclanthology.org/2022.acl-long.101/), accepted for publication as a main conference paper at ACL 2022. This README will walk you through the code and how to reproduce the results.
 
-
 Start by installing all libraries:
 
 `pip install -r requirements.txt`
+
+## Citation
+
+```
+@inproceedings{keidar-etal-2022-slangvolution,
+    title = "Slangvolution: {A} Causal Analysis of Semantic Change and Frequency Dynamics in Slang",
+    author = "Keidar, Daphna  and
+      Opedal, Andreas  and
+      Jin, Zhijing  and
+      Sachan, Mrinmaya",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.acl-long.101",
+    doi = "10.18653/v1/2022.acl-long.101",
+    pages = "1422--1442",
+    abstract = "Languages are continuously undergoing changes, and the mechanisms that underlie these changes are still a matter of debate. In this work, we approach language evolution through the lens of causality in order to model not only how various distributional factors associate with language change, but how they causally affect it. In particular, we study slang, which is an informal language that is typically restricted to a specific group or social setting. We analyze the semantic change and frequency shift of slang words and compare them to those of standard, nonslang words. With causal discovery and causal inference techniques, we measure the effect that word type (slang/nonslang) has on both semantic change and frequency shift, as well as its relationship to frequency, polysemy and part of speech. Our analysis provides some new insights in the study of language change, e.g., we show that slang words undergo less semantic change but tend to have larger frequency shifts over time.",
+}
+```
 
 ## Data Preparation
 
@@ -54,7 +74,7 @@ If you would like to experiment with different semantic change score metrics, yo
 The code for the frequency shift scores is provided in `frequency_change_analysis.py`. 
 
 ## Causal Analysis
-The causal analysis requires a .csv file that includes all variables. This file can be reproduced by following the above steps. Additionally, we provide the file `data/causal_dataset.csv` which consists of all variables used for our analysis apart from POS. The POS tags can be achieved as described above. The causal discovery algorithm is done in the R script `causal_graph_learning.R`. It follows three main steps. We first import and preprocess the data. This includes the categorizations of the polysemy variable as is discussed in the paper. We then plot density and qq-plots for our variables. Finally, we perform the causal analysis with PC-stable (for various alpha values), and visualize the resulting causal graph.
+The causal analysis requires a .csv file that includes all variables. This file can be reproduced by following the above steps. Additionally, we provide the file `data/causal_data_input.csv` which consists of all variables used for our analysis apart from POS. The POS tags can be achieved as described above. The causal discovery algorithm is done in the R script `causal_graph_learning.R`. It follows three main steps. We first import and preprocess the data. This includes the categorizations of the polysemy variable as is discussed in the paper. We then plot density and qq-plots for our variables. Finally, we perform the causal analysis with PC-stable (for various alpha values), and visualize the resulting causal graph.
 
 ## Other
 
